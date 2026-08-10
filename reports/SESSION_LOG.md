@@ -130,3 +130,141 @@ python src/killtest2_cda.py       # writes reports/killtest2_trace.png on PASS
    banner hold.
 4. Confirm `data/MANIFEST.md` gained a row per downloaded file, and that no raw
    archive data was staged for commit.
+
+---
+
+## Session 001b — 2026-08-10 04:58Z–13:54Z — Monitoring check-ins
+
+> **Ordering note.** This entry is appended at the end of the file rather than at
+> the top, despite post-dating Sessions 002–003, so that it does not collide with
+> the edit region those sessions use. Chronologically it is the most recent entry.
+
+**Branch:** `claude/postberg-phosphate-reproduction-mg9sjt` · **Continues:** Session 001
+
+### Gate summary — unchanged
+
+| Gate | Verdict | Change this session |
+| --- | --- | --- |
+| Kill-test 1 | **`UNRESOLVED`** | none from this session |
+| Kill-test 2 | **`UNRESOLVED`** | none from this session |
+
+No gate was advanced here. This session retrieved nothing and computed nothing
+about the science.
+
+### What was attempted
+
+Ten scheduled check-ins at roughly one-hour intervals, each re-probing the two
+kill-test source hosts and re-reading the state of pull requests #1 and #2.
+
+**MECHANICAL FACT** — every probe from this session returned the same result. One
+`HEAD` per host per round, 25 s timeout, `curl` exit code `56`:
+
+| Host | Rounds probed | Result every round |
+| --- | --- | --- |
+| `sbnarchive.psi.edu` | 10 | `CONNECT tunnel failed, response 403` |
+| `www.geo.fu-berlin.de` | 10 | `CONNECT tunnel failed, response 403` |
+
+Kill-test 2's source has never been reachable from this session, so no COCDA
+volume has been downloaded and `reports/killtest2_trace.png` still does not exist.
+
+### A sibling session executed kill-test 1
+
+**SOURCED CLAIM** — pull request
+[#2](https://github.com/xuanhuyle/enceladus-repro/pull/2) (branch
+`claude/host-reachability-check-2nhjpc`, head `89ffa77`, base this branch) reports
+Sessions 002–003, in which `www.geo.fu-berlin.de` was reachable and
+`src/killtest1_paper.py` ran to completion.
+
+**MECHANICAL FACT** — what this session verified directly, by reading that
+branch's committed contents at `89ffa77`:
+
+- `reports/killtest1.md` and `reports/killtest2.md` are byte-for-byte unchanged
+  from `b501baf` (`git diff` returns empty for both). No verdict was stamped.
+- `data/MANIFEST.md` gained exactly one row: the paper PDF, `16669185` bytes,
+  SHA256 `9d9d21c5acbcac3f16c9acb85afc101cea3dc46743d125c66e03324985b0cabe`,
+  retrieved `2026-08-10T04:32:10Z`. The PDF itself is not committed.
+- `reports/killtest1_findings.json` records `24` pages, `73748` characters
+  document-wide, Extended Data Table headings on pages `21` and `22`, and a
+  scanned scope of `404` characters across those two pages.
+- Verbatim page-21 extract: `Extended Data Table 1 | CDA set of Type 3 spectra
+  used for this work`. Page 22 begins `Extended Data Table 2 | Events of
+  phosphate-rich ice grain recorded by CDA.`
+- All six identifier patterns returned `0` matches within that scope.
+
+**`UNRESOLVED`** — this session did **not** verify the PDF's SHA256 against the
+bytes. It never held the file: the source host is blocked here, and `data/` is
+gitignored, so the digest above is quoted from that branch's manifest rather than
+recomputed. Anyone with network access should re-fetch and confirm.
+
+### Why kill-test 1 is still `UNRESOLVED` and not `FAIL`
+
+**MECHANICAL FACT** — `69` characters extracted from page 21 and `334` from page
+22 are heading, caption and footnote only; neither table body extracted. The
+tables are image- or vector-rendered.
+
+Zero identifier matches is therefore evidence that the table contents were never
+read — not evidence that identifiers are absent. Those two states imply opposite
+verdicts (`UNRESOLVED` vs `FAIL`) and the present evidence cannot distinguish
+them. The gate stays `UNRESOLVED`.
+
+### Defects found in this session's own kill-test 1 script
+
+**MECHANICAL FACT** — Sessions 002–003 identified two defects in
+`src/killtest1_paper.py` as committed at `b501baf`, both confirmed by reading the
+code here:
+
+1. The heading regex matched body-text cross-references ("listed in Extended Data
+   Table 1") as readily as real headings, so the scan covered pages
+   `[2, 6, 7, 9, 11, 21, 22]` — five prose pages beyond the two tables. Both
+   identifier hits in that run came from prose, not from any table.
+2. `text_layer_present` was computed document-wide, reporting `true` while the
+   table pages specifically carry no text layer.
+
+Either would have handed the adjudicator misleading evidence. Both are fixed on
+the PR #2 branch.
+
+### Network discrepancy
+
+**MECHANICAL FACT** — this session was denied at `04:58Z`, `05:59Z`, `07:01Z`,
+`08:06Z`, `09:26Z`, `10:28Z`, `11:30Z`, `12:33Z` and `13:54Z`; the sibling session
+retrieved the PDF at `04:32:10Z`, inside that window.
+
+**HYPOTHESIS** — the two sessions run in different environments with different
+egress policies, rather than one policy having opened and closed. Not verified:
+the proxy status endpoint reports only this session's own view.
+
+### Repository state
+
+**MECHANICAL FACT** — `main` was created at `14647fc` as an empty root commit; the
+two Session 001 commits were rebased onto it (`152f66a`/`9203296` →
+`7239dc3`/`b501baf`) and PR #1 opened against it. The repository's default branch
+is still this feature branch, not `main`; changing it needs repo-settings access
+no session here holds.
+
+### Open decision for the operator
+
+Recovering the Extended Data table bodies requires a change of method, and
+possibly of source. Put to the operator `2026-08-10T08:06Z`, unanswered as of
+`13:54Z`:
+
+1. **Nature-hosted Extended Data.** Nature is the publisher of record, so this
+   moves *toward* the primary source rather than substituting a secondary one for
+   it, and may yield machine-readable tables.
+2. **OCR of the retrieved PDF.** Same manifested source, no new network
+   dependency. If used, every recovered identifier must be cross-checked against
+   the archive before use — an OCR error in a spacecraft clock count would be
+   silent.
+3. **The CDA email.** Its premise has changed: the tables are now known to exist,
+   and Extended Data Table 2 is titled as an event listing. `draft_cda_email.md`
+   asks whether identifiers exist and should be rewritten before it is sent.
+
+No option was chosen here. Under the scope-discipline rule that choice is the
+operator's.
+
+### Next session must
+
+1. Not treat any of the above as advancing a gate. Both remain `UNRESOLVED`.
+2. Re-fetch the paper and confirm its SHA256 against the manifest row, since no
+   session has yet verified those bytes independently of the one that wrote them.
+3. Act on the operator's decision once given — from an environment with network
+   access, which this one is not.
