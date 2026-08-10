@@ -1,0 +1,20 @@
+# Rule 3 (CLAUDE.md): never commit raw archive data.
+# /data is ignored in its entirety EXCEPT the manifest.
+data/*
+!data/MANIFEST.md
+
+# Python
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+
+# Notebooks
+.ipynb_checkpoints/
+
+# OS
+.DS_Store
