@@ -45,9 +45,11 @@ the validation target: before the pipeline is used for anything new, it has to
 reproduce a known result from the public archive.
 
 I have been unable to map the nine phosphate-bearing grains onto specific events
-in the PDS CDA archive at PSI. Extended Data Tables 1 and 2 identify the grains
-within the paper, but I could not find a key that resolves them to archived
-records.
+in the PDS CDA archive at PSI. `<CONFIRM BEFORE SENDING: state here exactly what
+you did read and what was missing from it — e.g. "Extended Data Tables 1 and 2
+identify the grains within the paper, but I could not find a key that resolves
+them to archived records." Do not assert this until you have actually read those
+tables; see precondition 2 above.>`
 
 Would you be willing to share, for each of the nine grains, whichever of these
 you already have on hand:
