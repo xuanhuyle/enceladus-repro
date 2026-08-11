@@ -1,373 +1,635 @@
 {
   "gate": "killtest1",
-  "question": "Do Extended Data Tables 1 and 2 carry per-grain identifiers (spacecraft clock, event ID, timestamp, orbit/flyby reference) that can be resolved against the PDS CDA archive?",
-  "doi": "10.1038/s41586-023-05987-9",
-  "checked_at_utc": "2026-08-11T18:04:15Z",
+  "question": "Do Extended Data Tables 1 and 2 carry per-grain identifiers resolvable against the PDS CDA archive?",
+  "checked_at_utc": "2026-08-11T18:35:01Z",
   "verdict_policy": "This script stamps no verdict. reports/killtest1.md is adjudicated by hand against this evidence, per CLAUDE.md Rule 1.",
-  "publisher_pdf_route": {
-    "gate": "killtest1",
-    "question": "Do the nine phosphate-bearing grains resolve to machine-readable identifiers usable against the PDS archive?",
-    "paper_url": "https://www.geo.fu-berlin.de/en/geol/fachrichtungen/planet/projects/habitat_oasis/_layout/Postberg_2023_Nature618_Phosphates_Enceladus.pdf",
-    "n_pages": 24,
-    "extracted_chars": 73748,
-    "page_char_counts": {
-      "1": 5661,
-      "2": 6597,
-      "3": 7740,
-      "4": 5394,
-      "5": 8458,
-      "6": 8543,
-      "7": 8342,
-      "8": 8688,
-      "9": 7627,
-      "10": 357,
-      "11": 425,
-      "12": 462,
-      "13": 338,
-      "14": 485,
-      "15": 1196,
-      "16": 201,
-      "17": 912,
-      "18": 313,
-      "19": 349,
-      "20": 272,
-      "21": 69,
-      "22": 334,
-      "23": 604,
-      "24": 358
+  "transcription_source": {
+    "file": "data/paper/Postberg_2023_Nature618_Phosphates_Enceladus.pdf",
+    "sha256": "9d9d21c5acbcac3f16c9acb85afc101cea3dc46743d125c66e03324985b0cabe",
+    "pages": {
+      "extended_data_table_1": 21,
+      "extended_data_table_2": 22
     },
-    "extended_data_table_pages": {
-      "Extended\\s+Data\\s+Table\\s*1\\b": {
-        "occurrences": [
-          {
-            "page": 2,
-            "offset": 445
-          },
-          {
-            "page": 6,
-            "offset": 3192
-          },
-          {
-            "page": 7,
-            "offset": 5095
-          },
-          {
-            "page": 9,
-            "offset": 3462
-          },
-          {
-            "page": 21,
-            "offset": 0
-          }
-        ],
-        "heading_pages": [
-          21
-        ],
-        "cross_reference_pages": [
-          2,
-          6,
-          7,
+    "method": "Page rendered to PNG at 220 dpi with PyMuPDF and read directly as an image. The table bodies carry no text layer, so this is a visual read, verified by the checks in this script."
+  },
+  "extended_data_table_1": {
+    "caption": "CDA set of Type 3 spectra used for this work",
+    "columns_verbatim": [
+      "Period #",
+      "Period from/to (UTC)",
+      "Period from/to (SCLK)",
+      "Total Number of Type 3 spectra",
+      "Type 3 spectra triggered by impact"
+    ],
+    "row_count": 15,
+    "plus_total_row": true,
+    "rows": [
+      {
+        "period": 1,
+        "utc_from": "2004-10-27 23:50:16",
+        "utc_to": "2004-10-28 23:25:50",
+        "sclk_from": 1477613739,
+        "sclk_to": 1477698673,
+        "type3_total": 40,
+        "type3_impact": 9
+      },
+      {
+        "period": 2,
+        "utc_from": "2005-03-08 20:03:02",
+        "utc_to": "2005-03-10 02:41:35",
+        "sclk_from": 1489004979,
+        "sclk_to": 1489115292,
+        "type3_total": 94,
+        "type3_impact": 22
+      },
+      {
+        "period": 3,
+        "utc_from": "2005-06-26 09:35:30",
+        "utc_to": "2005-06-26 18:40:44",
+        "sclk_from": 1498471387,
+        "sclk_to": 1498504101,
+        "type3_total": 45,
+        "type3_impact": 23
+      },
+      {
+        "period": 4,
+        "utc_from": "2005-09-24 03:12:16",
+        "utc_to": "2005-09-25 04:59:27",
+        "sclk_from": 1506224443,
+        "sclk_to": 1506317274,
+        "type3_total": 78,
+        "type3_impact": 27
+      },
+      {
+        "period": 5,
+        "utc_from": "2005-10-29 20:56:28",
+        "utc_to": "2005-10-30 09:02:39",
+        "sclk_from": 1509312314,
+        "sclk_to": 1509355886,
+        "type3_total": 122,
+        "type3_impact": 38
+      },
+      {
+        "period": 6,
+        "utc_from": "2005-11-26 08:29:18",
+        "utc_to": "2005-11-26 23:31:28",
+        "sclk_from": 1511686700,
+        "sclk_to": 1511740830,
+        "type3_total": 51,
+        "type3_impact": 15
+      },
+      {
+        "period": 7,
+        "utc_from": "2005-12-24 04:19:14",
+        "utc_to": "2005-12-25 06:50:35",
+        "sclk_from": 1514090911,
+        "sclk_to": 1514186393,
+        "type3_total": 120,
+        "type3_impact": 44
+      },
+      {
+        "period": 8,
+        "utc_from": "2006-01-16 06:21:33",
+        "utc_to": "2006-01-18 14:44:13",
+        "sclk_from": 1516085464,
+        "sclk_to": 1516288425,
+        "type3_total": 16,
+        "type3_impact": 6
+      },
+      {
+        "period": 9,
+        "utc_from": "2006-02-25 00:58:00",
+        "utc_to": "2006-02-26 02:10:00",
+        "sclk_from": 1519522073,
+        "sclk_to": 1519612793,
+        "type3_total": 193,
+        "type3_impact": 37
+      },
+      {
+        "period": 10,
+        "utc_from": "2006-03-21 10:14:22",
+        "utc_to": "2006-03-22 18:02:44",
+        "sclk_from": 1521629068,
+        "sclk_to": 1521743571,
+        "type3_total": 89,
+        "type3_impact": 44
+      },
+      {
+        "period": 11,
+        "utc_from": "2006-12-03 00:24:12",
+        "utc_to": "2006-12-03 06:33:08",
+        "sclk_from": 1543798599,
+        "sclk_to": 1543820736,
+        "type3_total": 34,
+        "type3_impact": 25
+      },
+      {
+        "period": 12,
+        "utc_from": "2006-12-15 04:41:46",
+        "utc_to": "2006-12-15 16:59:56",
+        "sclk_from": 1544850860,
+        "sclk_to": 1544895150,
+        "type3_total": 4,
+        "type3_impact": 2
+      },
+      {
+        "period": 13,
+        "utc_from": "2007-05-10 19:14:05",
+        "utc_to": "2007-05-10 19:59:44",
+        "sclk_from": 1557517679,
+        "sclk_to": 1557520418,
+        "type3_total": 34,
+        "type3_impact": 14
+      },
+      {
+        "period": 14,
+        "utc_from": "2008-05-09 22:56:12",
+        "utc_to": "2008-05-10 02:19:47",
+        "sclk_from": 1589067220,
+        "sclk_to": 1589079435,
+        "type3_total": 39,
+        "type3_impact": 38
+      },
+      {
+        "period": 15,
+        "utc_from": "2008-11-16 20:59:47",
+        "utc_to": "2008-11-16 21:25:45",
+        "sclk_from": 1605562751,
+        "sclk_to": 1605564309,
+        "type3_total": 3,
+        "type3_impact": 1
+      }
+    ]
+  },
+  "extended_data_table_2": {
+    "caption": "Events of phosphate-rich ice grain recorded by CDA. Saturn distance is given in Saturn radii (equatorial radius R_S = 60268 km)",
+    "columns_verbatim": [
+      "Event#",
+      "UTC",
+      "SCLK",
+      "Saturn Radial Distance (R_S)",
+      "Impact Speed Estimate (km/s)"
+    ],
+    "row_count": 9,
+    "rows": [
+      {
+        "event": 1,
+        "utc": "2005-068/21:29:51",
+        "sclk": 1489096588,
+        "saturn_distance_rs": 7.4,
+        "impact_speed_kms": 8.3
+      },
+      {
+        "event": 2,
+        "utc": "2005-267/03:12:50",
+        "sclk": 1506224477,
+        "saturn_distance_rs": 5.2,
+        "impact_speed_kms": 9.1
+      },
+      {
+        "event": 3,
+        "utc": "2005-303/05:51:31",
+        "sclk": 1509344418,
+        "saturn_distance_rs": 6.3,
+        "impact_speed_kms": 6.8
+      },
+      {
+        "event": 4,
+        "utc": "2005-359/04:44:36",
+        "sclk": 1514178834,
+        "saturn_distance_rs": 6.4,
+        "impact_speed_kms": 6.9
+      },
+      {
+        "event": 5,
+        "utc": "2006-057/00:37:39",
+        "sclk": 1519607252,
+        "saturn_distance_rs": 9.3,
+        "impact_speed_kms": 6.6
+      },
+      {
+        "event": 6,
+        "utc": "2006-080/13:54:11",
+        "sclk": 1521642257,
+        "saturn_distance_rs": 11.0,
+        "impact_speed_kms": 6.7
+      },
+      {
+        "event": 7,
+        "utc": "2006-337/00:32:53",
+        "sclk": 1543799120,
+        "saturn_distance_rs": 5.0,
+        "impact_speed_kms": 12.6
+      },
+      {
+        "event": 8,
+        "utc": "2006-337/00:34:46",
+        "sclk": 1543799233,
+        "saturn_distance_rs": 5.0,
+        "impact_speed_kms": 12.6
+      },
+      {
+        "event": 9,
+        "utc": "2007-130/19:38:30",
+        "sclk": 1557519144,
+        "saturn_distance_rs": 4.7,
+        "impact_speed_kms": 10.3
+      }
+    ]
+  },
+  "prior_routes": {},
+  "internal_consistency": {
+    "sclk_minus_utc_offsets": {
+      "table2_event_1": 378692797,
+      "table2_event_2": 378692907,
+      "table2_event_3": 378692927,
+      "table2_event_4": 378692958,
+      "table2_event_5": 378692993,
+      "table2_event_6": 378693006,
+      "table2_event_7": 378693147,
+      "table2_event_8": 378693147,
+      "table2_event_9": 378693234,
+      "table1_p1_from": 378692723,
+      "table1_p1_to": 378692723,
+      "table1_p2_from": 378692797,
+      "table1_p2_to": 378692797,
+      "table1_p3_from": 378692857,
+      "table1_p3_to": 378692857,
+      "table1_p4_from": 378692907,
+      "table1_p4_to": 378692907,
+      "table1_p5_from": 378692926,
+      "table1_p5_to": 378692927,
+      "table1_p6_from": 378692942,
+      "table1_p6_to": 378692942,
+      "table1_p7_from": 378692957,
+      "table1_p7_to": 378692958,
+      "table1_p8_from": 378692971,
+      "table1_p8_to": 378692972,
+      "table1_p9_from": 378692993,
+      "table1_p9_to": 378692993,
+      "table1_p10_from": 378693006,
+      "table1_p10_to": 378693007,
+      "table1_p11_from": 378693147,
+      "table1_p11_to": 378693148,
+      "table1_p12_from": 378693154,
+      "table1_p12_to": 378693154,
+      "table1_p13_from": 378693234,
+      "table1_p13_to": 378693234,
+      "table1_p14_from": 378693448,
+      "table1_p14_to": 378693448,
+      "table1_p15_from": 378693564,
+      "table1_p15_to": 378693564
+    },
+    "offset_min_s": 378692723,
+    "offset_max_s": 378693564,
+    "offset_span_s": 841,
+    "offset_monotonic_nondecreasing_in_time": true,
+    "offset_max_step_s": 214,
+    "column_sum_type3_total": 962,
+    "column_sum_type3_impact": 345,
+    "printed_totals": {
+      "type3_total": 962,
+      "type3_impact": 345
+    },
+    "column_sums_match_printed_totals": true,
+    "every_event_inside_a_type3_period": true,
+    "event_period_containment": [
+      {
+        "event": 1,
+        "sclk": 1489096588,
+        "within_periods": [
+          2
+        ]
+      },
+      {
+        "event": 2,
+        "sclk": 1506224477,
+        "within_periods": [
+          4
+        ]
+      },
+      {
+        "event": 3,
+        "sclk": 1509344418,
+        "within_periods": [
+          5
+        ]
+      },
+      {
+        "event": 4,
+        "sclk": 1514178834,
+        "within_periods": [
+          7
+        ]
+      },
+      {
+        "event": 5,
+        "sclk": 1519607252,
+        "within_periods": [
           9
         ]
       },
-      "Extended\\s+Data\\s+Table\\s*2\\b": {
-        "occurrences": [
-          {
-            "page": 2,
-            "offset": 549
-          },
-          {
-            "page": 6,
-            "offset": 4149
-          },
-          {
-            "page": 11,
-            "offset": 193
-          },
-          {
-            "page": 22,
-            "offset": 8
-          }
-        ],
-        "heading_pages": [
-          22
-        ],
-        "cross_reference_pages": [
-          2,
-          6,
+      {
+        "event": 6,
+        "sclk": 1521642257,
+        "within_periods": [
+          10
+        ]
+      },
+      {
+        "event": 7,
+        "sclk": 1543799120,
+        "within_periods": [
           11
         ]
+      },
+      {
+        "event": 8,
+        "sclk": 1543799233,
+        "within_periods": [
+          11
+        ]
+      },
+      {
+        "event": 9,
+        "sclk": 1557519144,
+        "within_periods": [
+          13
+        ]
       }
-    },
-    "heading_offset_threshold_chars": 40,
-    "scanned_scope": "table heading pages [21, 22]",
-    "scanned_scope_chars": 404,
-    "identifier_candidates": {
-      "sclk_10digit": {
-        "count": 0,
-        "unique": 0,
-        "sample": []
-      },
-      "long_integer_8_12": {
-        "count": 0,
-        "unique": 0,
-        "sample": []
-      },
-      "iso_datetime": {
-        "count": 0,
-        "unique": 0,
-        "sample": []
-      },
-      "doy_datetime": {
-        "count": 0,
-        "unique": 0,
-        "sample": []
-      },
-      "event_id_labelled": {
-        "count": 0,
-        "unique": 0,
-        "sample": []
-      },
-      "cda_product_name": {
-        "count": 0,
-        "unique": 0,
-        "sample": []
-      }
-    },
-    "text_layer_present": true,
-    "table_page_extracts": {
-      "21": "Extended Data Table 1 | CDA set of Type 3 spectra used for this work\n",
-      "22": "Article\nExtended Data Table 2 | Events of phosphate-rich ice grain recorded by CDA. Saturn distance is given in Saturn radii \n(equatorial radius RS\u2009=\u200960268\u2009km)\nSince the impact speed onto CDA cannot be measured directly for these grains, the relative velocity of the spacecraft to a circular Keplerian orbit provides a rough estimate."
-    }
+    ]
   },
-  "nature_extended_data_route": {
-    "1": {
-      "url": "https://www.nature.com/articles/s41586-023-05987-9/tables/1",
-      "page_bytes": 164902,
-      "caption_verbatim": "Extended Data Table 1 CDA set of Type 3 spectra used for this work | Nature",
-      "markup_counts": {
-        "table": 0,
-        "tr": 0,
-        "td": 0,
-        "th": 0
-      },
-      "parsed_table_count": 0,
-      "column_headings_verbatim": null,
-      "row_counts": null,
-      "parse_error": "ValueError: No tables found",
-      "table_rendered_as_images": [
-        {
-          "url": "https://media.springernature.com/lw834/springer-static/esm/art%3A10.1038%2Fs41586-023-05987-9/MediaObjects/41586_2023_5987_Tab1_ESM.jpg",
-          "probe_error": "ProxyError(MaxRetryError(\"HTTPSConnectionPool(host='media.springernature.com', port=443): Max retries exceeded with url: /lw834/springer-static/esm/art%3A10.1038%2Fs41586-023-05987-9/MediaObjects/41586_2023_5987_Tab1_ESM.jpg (Caused by ProxyError('Unable to connect to proxy', OSError('Tunnel connection failed: 403 Forbidden')))\"))"
-        }
-      ],
-      "visible_text_chars": 2922,
-      "identifier_candidates": {
-        "sclk_10digit": {
-          "count": 0,
-          "unique": 0,
-          "sample": []
-        },
-        "long_integer_8_12": {
-          "count": 0,
-          "unique": 0,
-          "sample": []
-        },
-        "iso_datetime": {
-          "count": 0,
-          "unique": 0,
-          "sample": []
-        },
-        "doy_datetime": {
-          "count": 0,
-          "unique": 0,
-          "sample": []
-        },
-        "event_id_labelled": {
-          "count": 0,
-          "unique": 0,
-          "sample": []
-        },
-        "cda_product_name": {
-          "count": 0,
-          "unique": 0,
-          "sample": []
-        }
-      },
-      "identifier_scan_scope": "whole page visible text, including navigation and boilerplate \u2014 NOT a table body, because the page contains no tabular markup. Matches here are not evidence of identifiers in the table."
+  "archive_volume_count": 100,
+  "archive_resolution": [
+    {
+      "event": 1,
+      "utc": "2005-068/21:29:51",
+      "sclk": 1489096588,
+      "yyddd": 5068,
+      "volume": "COCDA_0007",
+      "printed_saturn_distance_rs": 7.4,
+      "archive_event_time_format_sample": "2005-001T00:02:42",
+      "exact_second_match_rows": 2,
+      "candidate_rows_within_2s": 3,
+      "match_offset_s": 0.0,
+      "matched_rows": 2,
+      "resolved": true,
+      "archive_event_time": "2005-068T21:29:51",
+      "archive_event_id": 230039,
+      "archive_saturn_distance_rs": 7.38,
+      "saturn_distance_delta_rs": 0.02,
+      "saturn_distance_agrees": true
     },
-    "2": {
-      "url": "https://www.nature.com/articles/s41586-023-05987-9/tables/2",
-      "page_bytes": 165375,
-      "caption_verbatim": "Extended Data Table 2 Events of phosphate-rich ice grain recorded by CDA. Saturn distance is given in Saturn radii (equatorial radius R<sub>S</sub> = 60268 km) | Nature",
-      "markup_counts": {
-        "table": 0,
-        "tr": 0,
-        "td": 0,
-        "th": 0
-      },
-      "parsed_table_count": 0,
-      "column_headings_verbatim": null,
-      "row_counts": null,
-      "parse_error": "ValueError: No tables found",
-      "table_rendered_as_images": [
-        {
-          "url": "https://media.springernature.com/lw1700/springer-static/esm/art%3A10.1038%2Fs41586-023-05987-9/MediaObjects/41586_2023_5987_Tab2_ESM.jpg",
-          "probe_error": "ProxyError(MaxRetryError(\"HTTPSConnectionPool(host='media.springernature.com', port=443): Max retries exceeded with url: /lw1700/springer-static/esm/art%3A10.1038%2Fs41586-023-05987-9/MediaObjects/41586_2023_5987_Tab2_ESM.jpg (Caused by ProxyError('Unable to connect to proxy', OSError('Tunnel connection failed: 403 Forbidden')))\"))"
-        }
-      ],
-      "visible_text_chars": 3263,
-      "identifier_candidates": {
-        "sclk_10digit": {
-          "count": 0,
-          "unique": 0,
-          "sample": []
-        },
-        "long_integer_8_12": {
-          "count": 0,
-          "unique": 0,
-          "sample": []
-        },
-        "iso_datetime": {
-          "count": 0,
-          "unique": 0,
-          "sample": []
-        },
-        "doy_datetime": {
-          "count": 0,
-          "unique": 0,
-          "sample": []
-        },
-        "event_id_labelled": {
-          "count": 0,
-          "unique": 0,
-          "sample": []
-        },
-        "cda_product_name": {
-          "count": 0,
-          "unique": 0,
-          "sample": []
-        }
-      },
-      "identifier_scan_scope": "whole page visible text, including navigation and boilerplate \u2014 NOT a table body, because the page contains no tabular markup. Matches here are not evidence of identifiers in the table."
+    {
+      "event": 2,
+      "utc": "2005-267/03:12:50",
+      "sclk": 1506224477,
+      "yyddd": 5267,
+      "volume": "COCDA_0014",
+      "printed_saturn_distance_rs": 5.2,
+      "archive_event_time_format_sample": "2005-234T00:02:19",
+      "exact_second_match_rows": 1,
+      "candidate_rows_within_2s": 5,
+      "match_offset_s": 0.0,
+      "matched_rows": 1,
+      "resolved": true,
+      "archive_event_time": "2005-267T03:12:50",
+      "archive_event_id": 458712,
+      "archive_saturn_distance_rs": 5.75,
+      "saturn_distance_delta_rs": 0.55,
+      "saturn_distance_agrees": false,
+      "misread_flag": "Saturn distance disagrees with the archive record at this UTC; treat the printed row or this transcription as suspect."
     },
-    "3": {
-      "url": "https://www.nature.com/articles/s41586-023-05987-9/tables/3",
-      "page_bytes": 165657,
-      "caption_verbatim": "Extended Data Table 3 Temporal variations in dissolved species in fluids (in M), with pH at the calculated in-situ pH at 150 \u00b0C and 30 MPa | Nature",
-      "markup_counts": {
-        "table": 0,
-        "tr": 0,
-        "td": 0,
-        "th": 0
-      },
-      "parsed_table_count": 0,
-      "column_headings_verbatim": null,
-      "row_counts": null,
-      "parse_error": "ValueError: No tables found",
-      "table_rendered_as_images": [
-        {
-          "url": "https://media.springernature.com/lw1700/springer-static/esm/art%3A10.1038%2Fs41586-023-05987-9/MediaObjects/41586_2023_5987_Tab3_ESM.jpg",
-          "probe_error": "ProxyError(MaxRetryError(\"HTTPSConnectionPool(host='media.springernature.com', port=443): Max retries exceeded with url: /lw1700/springer-static/esm/art%3A10.1038%2Fs41586-023-05987-9/MediaObjects/41586_2023_5987_Tab3_ESM.jpg (Caused by ProxyError('Unable to connect to proxy', OSError('Tunnel connection failed: 403 Forbidden')))\"))"
-        }
-      ],
-      "visible_text_chars": 3529,
-      "identifier_candidates": {
-        "sclk_10digit": {
-          "count": 0,
-          "unique": 0,
-          "sample": []
-        },
-        "long_integer_8_12": {
-          "count": 0,
-          "unique": 0,
-          "sample": []
-        },
-        "iso_datetime": {
-          "count": 0,
-          "unique": 0,
-          "sample": []
-        },
-        "doy_datetime": {
-          "count": 0,
-          "unique": 0,
-          "sample": []
-        },
-        "event_id_labelled": {
-          "count": 0,
-          "unique": 0,
-          "sample": []
-        },
-        "cda_product_name": {
-          "count": 0,
-          "unique": 0,
-          "sample": []
-        }
-      },
-      "identifier_scan_scope": "whole page visible text, including navigation and boilerplate \u2014 NOT a table body, because the page contains no tabular markup. Matches here are not evidence of identifiers in the table."
+    {
+      "event": 3,
+      "utc": "2005-303/05:51:31",
+      "sclk": 1509344418,
+      "yyddd": 5303,
+      "volume": "COCDA_0016",
+      "printed_saturn_distance_rs": 6.3,
+      "archive_event_time_format_sample": "2005-290T00:12:05",
+      "exact_second_match_rows": 1,
+      "candidate_rows_within_2s": 2,
+      "match_offset_s": 0.0,
+      "matched_rows": 1,
+      "resolved": true,
+      "archive_event_time": "2005-303T05:51:31",
+      "archive_event_id": 520013,
+      "archive_saturn_distance_rs": 6.31,
+      "saturn_distance_delta_rs": 0.01,
+      "saturn_distance_agrees": true
     },
-    "4": {
-      "url": "https://www.nature.com/articles/s41586-023-05987-9/tables/4",
-      "page_bytes": 165740,
-      "caption_verbatim": "Extended Data Table 4 Results (mole abundance in mol/kg) of electron probe microanalyzer (EPMA) analyses for Ca phosphates [Grain A and Vein B for Run #1, and Grains C and D for Run #2 (see Extended Data Fig. <a data-track=\"click\" data-track-label=\"link\" data-track-action=\"figure anchor\" href=\"/articles/s41586-023-05987-9#Fig11\">6</a>)], and for Ca carbonate minerals for Runs #1 and #2 | Nature",
-      "markup_counts": {
-        "table": 0,
-        "tr": 0,
-        "td": 0,
-        "th": 0
-      },
-      "parsed_table_count": 0,
-      "column_headings_verbatim": null,
-      "row_counts": null,
-      "parse_error": "ValueError: No tables found",
-      "table_rendered_as_images": [
-        {
-          "url": "https://media.springernature.com/lw728/springer-static/esm/art%3A10.1038%2Fs41586-023-05987-9/MediaObjects/41586_2023_5987_Tab4_ESM.jpg",
-          "probe_error": "ProxyError(MaxRetryError(\"HTTPSConnectionPool(host='media.springernature.com', port=443): Max retries exceeded with url: /lw728/springer-static/esm/art%3A10.1038%2Fs41586-023-05987-9/MediaObjects/41586_2023_5987_Tab4_ESM.jpg (Caused by ProxyError('Unable to connect to proxy', OSError('Tunnel connection failed: 403 Forbidden')))\"))"
-        }
-      ],
-      "visible_text_chars": 3402,
-      "identifier_candidates": {
-        "sclk_10digit": {
-          "count": 0,
-          "unique": 0,
-          "sample": []
-        },
-        "long_integer_8_12": {
-          "count": 0,
-          "unique": 0,
-          "sample": []
-        },
-        "iso_datetime": {
-          "count": 0,
-          "unique": 0,
-          "sample": []
-        },
-        "doy_datetime": {
-          "count": 0,
-          "unique": 0,
-          "sample": []
-        },
-        "event_id_labelled": {
-          "count": 0,
-          "unique": 0,
-          "sample": []
-        },
-        "cda_product_name": {
-          "count": 0,
-          "unique": 0,
-          "sample": []
-        }
-      },
-      "identifier_scan_scope": "whole page visible text, including navigation and boilerplate \u2014 NOT a table body, because the page contains no tabular markup. Matches here are not evidence of identifiers in the table."
+    {
+      "event": 4,
+      "utc": "2005-359/04:44:36",
+      "sclk": 1514178834,
+      "yyddd": 5359,
+      "volume": "COCDA_0018",
+      "printed_saturn_distance_rs": 6.4,
+      "archive_event_time_format_sample": "2005-331T00:00:53",
+      "exact_second_match_rows": 1,
+      "candidate_rows_within_2s": 2,
+      "match_offset_s": 0.0,
+      "matched_rows": 1,
+      "resolved": true,
+      "archive_event_time": "2005-359T04:44:36",
+      "archive_event_id": 590866,
+      "archive_saturn_distance_rs": 6.57,
+      "saturn_distance_delta_rs": 0.17,
+      "saturn_distance_agrees": false,
+      "misread_flag": "Saturn distance disagrees with the archive record at this UTC; treat the printed row or this transcription as suspect."
+    },
+    {
+      "event": 5,
+      "utc": "2006-057/00:37:39",
+      "sclk": 1519607252,
+      "yyddd": 6057,
+      "volume": "COCDA_0020",
+      "printed_saturn_distance_rs": 9.3,
+      "archive_event_time_format_sample": "2006-031T00:01:19",
+      "exact_second_match_rows": 1,
+      "candidate_rows_within_2s": 2,
+      "match_offset_s": 0.0,
+      "matched_rows": 1,
+      "resolved": true,
+      "archive_event_time": "2006-057T00:37:39",
+      "archive_event_id": 707568,
+      "archive_saturn_distance_rs": 9.43,
+      "saturn_distance_delta_rs": 0.13,
+      "saturn_distance_agrees": false,
+      "misread_flag": "Saturn distance disagrees with the archive record at this UTC; treat the printed row or this transcription as suspect."
+    },
+    {
+      "event": 6,
+      "utc": "2006-080/13:54:11",
+      "sclk": 1521642257,
+      "yyddd": 6080,
+      "volume": "COCDA_0021",
+      "printed_saturn_distance_rs": 11.0,
+      "archive_event_time_format_sample": "2006-061T00:07:18",
+      "exact_second_match_rows": 0,
+      "candidate_rows_within_2s": 1,
+      "match_offset_s": 1.0,
+      "matched_rows": 1,
+      "resolved": true,
+      "archive_event_time": "2006-080T13:54:12",
+      "archive_event_id": 668141,
+      "archive_saturn_distance_rs": 10.87,
+      "saturn_distance_delta_rs": 0.13,
+      "saturn_distance_agrees": false,
+      "misread_flag": "Saturn distance disagrees with the archive record at this UTC; treat the printed row or this transcription as suspect."
+    },
+    {
+      "event": 7,
+      "utc": "2006-337/00:32:53",
+      "sclk": 1543799120,
+      "yyddd": 6337,
+      "volume": "COCDA_0030",
+      "printed_saturn_distance_rs": 5.0,
+      "archive_event_time_format_sample": "2006-336T00:02:50",
+      "exact_second_match_rows": 1,
+      "candidate_rows_within_2s": 4,
+      "match_offset_s": 0.0,
+      "matched_rows": 1,
+      "resolved": true,
+      "archive_event_time": "2006-337T00:32:53",
+      "archive_event_id": 966467,
+      "archive_saturn_distance_rs": 4.98,
+      "saturn_distance_delta_rs": 0.02,
+      "saturn_distance_agrees": true
+    },
+    {
+      "event": 8,
+      "utc": "2006-337/00:34:46",
+      "sclk": 1543799233,
+      "yyddd": 6337,
+      "volume": "COCDA_0030",
+      "printed_saturn_distance_rs": 5.0,
+      "archive_event_time_format_sample": "2006-336T00:02:50",
+      "exact_second_match_rows": 0,
+      "candidate_rows_within_2s": 3,
+      "match_offset_s": 1.0,
+      "matched_rows": 1,
+      "resolved": true,
+      "archive_event_time": "2006-337T00:34:45",
+      "archive_event_id": 966526,
+      "archive_saturn_distance_rs": 4.98,
+      "saturn_distance_delta_rs": 0.02,
+      "saturn_distance_agrees": true
+    },
+    {
+      "event": 9,
+      "utc": "2007-130/19:38:30",
+      "sclk": 1557519144,
+      "yyddd": 7130,
+      "volume": "COCDA_0035",
+      "printed_saturn_distance_rs": 4.7,
+      "archive_event_time_format_sample": "2007-122T00:01:33",
+      "exact_second_match_rows": 1,
+      "candidate_rows_within_2s": 3,
+      "match_offset_s": 0.0,
+      "matched_rows": 1,
+      "resolved": true,
+      "archive_event_time": "2007-130T19:38:30",
+      "archive_event_id": 1025515,
+      "archive_saturn_distance_rs": 4.72,
+      "saturn_distance_delta_rs": 0.02,
+      "saturn_distance_agrees": true
     }
-  },
-  "tabular_markup_present_on_any_page": false,
-  "every_table_published_as_image": true,
-  "rows_extracted_total": 0,
-  "nine_phosphate_grains_resolved_to_identifiers": false,
-  "type3_grains_resolved_to_identifiers": false,
-  "resolution_blocker": "The table bodies were not read. All four Extended Data tables are published as JPEG images inside their HTML pages; the pages contain zero <table>, <tr>, <td> and <th> elements, so pandas.read_html and any DOM-based parser have nothing to parse. This is the same barrier the publisher PDF presented, in a different container.",
-  "status": "UNRESOLVED",
-  "status_reason": "Blocked at extraction, not decided. Whether the tables carry per-grain identifiers is UNKNOWN: their contents were never read. 'Not read' and 'not present' imply opposite verdicts (UNRESOLVED vs FAIL) and this evidence cannot distinguish them."
+  ],
+  "events_resolved": 9,
+  "events_total": 9,
+  "saturn_distance_cross_checks_agreeing": 5,
+  "misreads": [
+    {
+      "event": 2,
+      "utc": "2005-267/03:12:50",
+      "sclk": 1506224477,
+      "yyddd": 5267,
+      "volume": "COCDA_0014",
+      "printed_saturn_distance_rs": 5.2,
+      "archive_event_time_format_sample": "2005-234T00:02:19",
+      "exact_second_match_rows": 1,
+      "candidate_rows_within_2s": 5,
+      "match_offset_s": 0.0,
+      "matched_rows": 1,
+      "resolved": true,
+      "archive_event_time": "2005-267T03:12:50",
+      "archive_event_id": 458712,
+      "archive_saturn_distance_rs": 5.75,
+      "saturn_distance_delta_rs": 0.55,
+      "saturn_distance_agrees": false,
+      "misread_flag": "Saturn distance disagrees with the archive record at this UTC; treat the printed row or this transcription as suspect."
+    },
+    {
+      "event": 4,
+      "utc": "2005-359/04:44:36",
+      "sclk": 1514178834,
+      "yyddd": 5359,
+      "volume": "COCDA_0018",
+      "printed_saturn_distance_rs": 6.4,
+      "archive_event_time_format_sample": "2005-331T00:00:53",
+      "exact_second_match_rows": 1,
+      "candidate_rows_within_2s": 2,
+      "match_offset_s": 0.0,
+      "matched_rows": 1,
+      "resolved": true,
+      "archive_event_time": "2005-359T04:44:36",
+      "archive_event_id": 590866,
+      "archive_saturn_distance_rs": 6.57,
+      "saturn_distance_delta_rs": 0.17,
+      "saturn_distance_agrees": false,
+      "misread_flag": "Saturn distance disagrees with the archive record at this UTC; treat the printed row or this transcription as suspect."
+    },
+    {
+      "event": 5,
+      "utc": "2006-057/00:37:39",
+      "sclk": 1519607252,
+      "yyddd": 6057,
+      "volume": "COCDA_0020",
+      "printed_saturn_distance_rs": 9.3,
+      "archive_event_time_format_sample": "2006-031T00:01:19",
+      "exact_second_match_rows": 1,
+      "candidate_rows_within_2s": 2,
+      "match_offset_s": 0.0,
+      "matched_rows": 1,
+      "resolved": true,
+      "archive_event_time": "2006-057T00:37:39",
+      "archive_event_id": 707568,
+      "archive_saturn_distance_rs": 9.43,
+      "saturn_distance_delta_rs": 0.13,
+      "saturn_distance_agrees": false,
+      "misread_flag": "Saturn distance disagrees with the archive record at this UTC; treat the printed row or this transcription as suspect."
+    },
+    {
+      "event": 6,
+      "utc": "2006-080/13:54:11",
+      "sclk": 1521642257,
+      "yyddd": 6080,
+      "volume": "COCDA_0021",
+      "printed_saturn_distance_rs": 11.0,
+      "archive_event_time_format_sample": "2006-061T00:07:18",
+      "exact_second_match_rows": 0,
+      "candidate_rows_within_2s": 1,
+      "match_offset_s": 1.0,
+      "matched_rows": 1,
+      "resolved": true,
+      "archive_event_time": "2006-080T13:54:12",
+      "archive_event_id": 668141,
+      "archive_saturn_distance_rs": 10.87,
+      "saturn_distance_delta_rs": 0.13,
+      "saturn_distance_agrees": false,
+      "misread_flag": "Saturn distance disagrees with the archive record at this UTC; treat the printed row or this transcription as suspect."
+    }
+  ],
+  "events_with_saturn_distance_disagreement": [
+    2,
+    4,
+    5,
+    6
+  ],
+  "status": "IDENTIFIERS_RESOLVE_CROSSCHECK_DISAGREEMENTS",
+  "status_is_a_gate_verdict": false,
+  "status_reason": "9 of 9 events resolved to a CDAEVENTS record. Saturn-distance cross-check agreed for 5 of 9; events [2, 4, 5, 6] disagree by more than 0.05 R_S. The disagreements are reported, not corrected: the printed values were re-read at 500 dpi and confirmed, and the transcription passes every internal check, so the discrepancy is between the publication and the archive rather than a reading error. Which is correct is not decided here. This status describes the evidence; it is NOT a gate verdict.",
+  "uniqueness_caveat": "A timestamp does not pick out a unique CDAEVENTS record. The CDA event stream is dense, and each event's UTC has between 1 and 5 candidate records within 2 s. 'Resolved' therefore means a record exists at that time, not that the mapping grain -> record is one-to-one."
 }
