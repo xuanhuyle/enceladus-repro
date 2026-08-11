@@ -13,13 +13,14 @@ per gate, and evidence links. Newest session first.
 **Open gate at session start:** kill-test 1, the go/no-go. Unchanged this
 session — no verdict stamped, no adjudication attempted.
 
-> **Ordering note.** Session 004's entry is **not in this file**. It lives only on
-> the unmerged pull request
-> [#3](https://github.com/xuanhuyle/enceladus-repro/pull/3) (branch
-> `claude/postberg-phosphate-reproduction-mg9sjt`, head `88c24d2`). This branch
-> was based on `main` as instructed, and `main` does not carry it. The two
-> entries will need merging; both insert at the top of this file, so a conflict
-> is expected there and is not evidence of lost work.
+> **Ordering note — resolved.** When this entry was first written, Session 004's
+> entry was not in this file: it lived only on the then-unmerged pull request
+> [#3](https://github.com/xuanhuyle/enceladus-repro/pull/3), because this branch
+> was based on `main` as instructed and `main` did not carry it. PR #3 has since
+> been merged (`2bb855c`) and the predicted conflict at the top of this file was
+> resolved by **keeping both entries**, Session 005 above Session 004. Neither
+> side was dropped; all six entries were verified present and unduplicated after
+> the resolution.
 
 ### Gate summary
 
@@ -188,6 +189,111 @@ one being quietly deleted. Running the committed script today produces
    — the system `cryptography` package fails to load its Rust bindings without it,
    exactly as Session 003 predicted. This is an environment defect, so
    `pyproject.toml` is still deliberately unchanged.
+
+---
+
+## Session 004 — 2026-08-11 — Consolidation onto `main`; kill-test 2 attempted and blocked
+
+**Branch:** `claude/postberg-phosphate-reproduction-mg9sjt` (fast-forwarded to `main`)
+
+**Open gate at session start:** kill-test 1, the go/no-go. Untouched this session
+by operator instruction — its route is being decided separately.
+
+### Gate summary
+
+| Gate | Verdict | Change this session |
+| --- | --- | --- |
+| Kill-test 1 | **`UNRESOLVED`** | none — not touched, by instruction |
+| Kill-test 2 | **`UNRESOLVED`** | **attempted for the first time; blocked at the fetch** |
+
+### Consolidation — MECHANICAL FACT
+
+Both pull requests merged into `main`, in the approved order. No branch deleted,
+no force-push, no history rewritten.
+
+| Step | Result |
+| --- | --- |
+| PR #1 `mg9sjt` → `main` | merged as `7c9bca8` |
+| PR #2 retargeted `mg9sjt` → `main`, then merged | merged as `b561dac` |
+
+Verified on `main` after the merges:
+
+- `data/MANIFEST.md` carries the one Postberg PDF row (`16669185` bytes).
+- `reports/killtest1_findings.json` is the real-evidence version — thirteen keys,
+  including `table_page_extracts` — not the transport-blocker version.
+- `reports/BRANCH_INVENTORY.md` survived. A two-dot diff had suggested PR #2
+  would delete it; a three-way merge retains it, since only one side added it.
+  This was checked with `git merge-tree --write-tree` **before** merging rather
+  than discovered afterwards.
+- `reports/killtest1.md` and `reports/killtest2.md` both still read `UNRESOLVED`.
+  **The consolidation stamped no verdict.**
+
+### Kill-test 2 — ran, `UNRESOLVED`
+
+**MECHANICAL FACT** — `python src/killtest2_cda.py` exited `2` at the first step,
+listing the archive root. Verbatim:
+
+```
+transport failure listing https://sbnarchive.psi.edu/pds3/cassini/cda/:
+ProxyError(MaxRetryError("HTTPSConnectionPool(host='sbnarchive.psi.edu', port=443):
+Max retries exceeded with url: /pds3/cassini/cda/ (Caused by ProxyError('Unable to
+connect to proxy', OSError('Tunnel connection failed: 403 Forbidden')))"))
+```
+
+`reports/killtest2_trace.png` was **not** produced and does not exist on any
+branch. No COCDA volume has ever been downloaded.
+
+**The parsing gate was never exercised.** The script failed before reaching
+`pdr`, so nothing was learned about whether CDA products parse. A `FAIL` would
+require the archive to be reachable and the product to refuse to parse; that has
+not happened, and `UNRESOLVED` is the only verdict this run supports.
+
+### The environment split persists — MECHANICAL FACT
+
+The operator's instruction stated that `sbnarchive.psi.edu` now answers `200`.
+**It does not answer from this session.** One `HEAD` per host, 30 s timeout, at
+`2026-08-11T03:29Z` and again immediately before the kill-test 2 run:
+
+| Host | This session | Sibling session (Session 002, `2026-08-10`) |
+| --- | --- | --- |
+| `sbnarchive.psi.edu` | `CONNECT` `403` | `200` |
+| `www.geo.fu-berlin.de` | `CONNECT` `403` | `200` |
+
+This session has been denied on every probe since `2026-08-10T02:23Z`, without a
+single exception, across nineteen rounds.
+
+**HYPOTHESIS** — the two sessions run in different environments with different
+egress policies. Not verified: the proxy status endpoint reports only this
+session's own view, and nothing here can inspect another environment's policy.
+
+The operational consequence is concrete: **kill-test 2 cannot be run from this
+session**, and re-running it here will keep returning `UNRESOLVED` no matter how
+many times it is attempted. It has to run where the archive answers.
+
+### `draft_cda_email.md` rewritten — still unsent
+
+The premise narrowed, so the ask narrowed with it. The old draft asked whether
+per-event identifiers exist — a question we had no standing to ask, having never
+seen the tables. We have now seen that both tables exist and that Extended Data
+Table 2 is titled as an event listing; what we lack is their contents, the bodies
+being images.
+
+The rewritten draft leads with the cheapest possible request — a machine-readable
+form of the two tables — and falls back to per-grain identifiers only if that is
+unavailable. It carries three preconditions, chief among them checking the
+Nature-hosted Extended Data first, and still leaves the recipient
+address `UNRESOLVED` rather than inventing one.
+
+### Next session must
+
+1. Run kill-test 2 **from an environment where `sbnarchive.psi.edu` answers**.
+   Per the operator: a crash on real PDS files is a bug to debug, not a gate
+   `FAIL`.
+2. Leave kill-test 1 alone until the operator's route decision is made.
+3. Independently re-fetch the paper and confirm its SHA256. No session has yet
+   verified those bytes apart from the one that wrote the manifest row.
+4. Optionally tidy the log ordering: Session 001b sits at the bottom of this file
+   but post-dates Sessions 002–003. Its entry says so. Cosmetic only.
 
 ---
 
