@@ -5,6 +5,192 @@ per gate, and evidence links. Newest session first.
 
 ---
 
+## Session 005 — 2026-08-11 — Archive reachable; kill-test 2 exercised for real; paper bytes independently confirmed
+
+**Branch:** `claude/session-005-provenance-gate-6jxjb0`, based on `main` at
+`b561dac` by operator instruction.
+
+**Open gate at session start:** kill-test 1, the go/no-go. Unchanged this
+session — no verdict stamped, no adjudication attempted.
+
+> **Ordering note.** Session 004's entry is **not in this file**. It lives only on
+> the unmerged pull request
+> [#3](https://github.com/xuanhuyle/enceladus-repro/pull/3) (branch
+> `claude/postberg-phosphate-reproduction-mg9sjt`, head `88c24d2`). This branch
+> was based on `main` as instructed, and `main` does not carry it. The two
+> entries will need merging; both insert at the top of this file, so a conflict
+> is expected there and is not evidence of lost work.
+
+### Gate summary
+
+| Gate | Verdict | Change this session |
+| --- | --- | --- |
+| Kill-test 1 | **`UNRESOLVED`** | none — not adjudicated. Its Nature-supplementary route was probed and is blocked (below) |
+| Kill-test 2 | **`UNRESOLVED`** | **first genuine exercise of the parsing gate**; blocker moved from network to product selection |
+| Paper byte provenance (**not a science gate**) | `PASS` | SHA256 re-confirmed independently |
+
+### 1. Host probes — the environment split has closed
+
+**MECHANICAL FACT** — one `HEAD` per host, 30 s timeout, `2026-08-11T03:38:27Z`:
+
+| Host | This session | Session 004 (same day, ~`03:29Z`) |
+| --- | --- | --- |
+| `sbnarchive.psi.edu` | **`200`** | `CONNECT` `403` |
+| `www.geo.fu-berlin.de` | **`200`** | `CONNECT` `403` |
+
+Neither returned `403`, so the operator's stop-condition did not fire and the
+session proceeded. This retires the Session 004 **HYPOTHESIS** of an environment
+split for these two hosts: the archive answers here.
+
+### 2. Paper provenance — `MATCH`
+
+**MECHANICAL FACT** — `python src/verify_paper_provenance.py` (new this session)
+re-fetched the PDF and recomputed its digest:
+
+| Quantity | Value |
+| --- | --- |
+| Size | `16669185` bytes |
+| SHA256 | `9d9d21c5acbcac3f16c9acb85afc101cea3dc46743d125c66e03324985b0cabe` |
+| Manifest row it was compared against | retrieved `2026-08-10T04:32:10Z` |
+| Result | **`MATCH`** — size and digest both equal |
+
+Evidence: [`paper_provenance_check.json`](paper_provenance_check.json). The
+expected digest is read from `data/MANIFEST.md` **before** the fetch, so the
+fetch cannot supply its own expectation. `data/MANIFEST.md` is byte-for-byte
+unchanged by this check, which is the correct outcome for matching bytes.
+
+This closes the gap flagged in `BRANCH_INVENTORY.md` §3 and in Session 001b: the
+digest had only ever been written by the session that downloaded the file. A
+second session, on a different day, has now re-fetched and recomputed it.
+
+> **This is provenance, not authentication.** It establishes that the bytes
+> served at that URL are stable across sessions. It does **not** verify that the
+> PDF is a genuine or correct copy of Postberg et al. 2023, and it must not be
+> described that way — the host serving it is not the publisher of record.
+
+### 3. Kill-test 2 — `UNRESOLVED`, but the gate was finally exercised
+
+Full write-up: [`killtest2.md`](killtest2.md), rewritten this session because its
+previous text ("the blocker is network only", "needs no edits") had become false.
+
+**MECHANICAL FACT** — how far the run got: archive root listed (`100` `COCDA_*`
+volumes); `COCDA_0001/INDEX/INDEX.LBL` + `INDEX.TAB` downloaded and manifested;
+**`pdr` parsed the index**, returning `25885` rows with columns
+`FILE_SPECIFICATION_NAME`, `RECORD BYTES`, `FILE_RECORDS`, `DATA_SET_ID`; the one
+matching MS product located, downloaded and manifested.
+
+**The blocker is no longer transport.** It is that the selected product is empty:
+`CDASPECTRA_99084_00100.LBL` declares `ROWS = 0`, and its data file is `602`
+bytes — one `RECORD_BYTES` of blank padding. Its `START_TIME`/`STOP_TIME` of
+`1999-084` to `2000-100` place it in early cruise. Nothing was mis-parsed, so
+this is `UNRESOLVED` and not `FAIL`; every product opened so far parsed correctly.
+
+**Four defects fixed in `src/killtest2_cda.py`**, each found against real archive
+files and each fixed by discovering the archive's shape rather than guessing
+again: index directory case (`index/` → `404`, `INDEX/` → `200`); path-column
+contamination (`FILE_RECORDS` joined into the path, yielding a URL ending
+`...LBL 602`); doubled volume segment (paths are archive-root-relative here); and
+detached labels (the `.LBL` carries no data, so the companion file must be
+fetched or `pdr` silently returns an empty product).
+
+**New: `src/killtest2_survey_products.py`** counts records per product family.
+Covering **`COCDA_0101` only**, `292423` entries: five per-event signal families
+carry records in bulk — `MPSIGNALS` `60178`, `QCSIGNALS` `60178`, `QISIGNALS`
+`60178`, `QTSIGNALS` `55994`, `QPSIGNALS` `55889` entries, all with
+`FILE_RECORDS` > 0 — while `CDASPECTRA` holds `1` entry with `550` records and
+`CDAEVENTS` `1` entry with `0` records. Evidence:
+[`killtest2_product_survey.json`](killtest2_product_survey.json).
+
+> **A wrong claim caught and corrected.** The survey's first draft asserted
+> archive-wide coverage. `CUMINDEX.TAB` here is **not** cumulative: every entry in
+> `COCDA_0101`'s copy carries the `COCDA_0101` prefix. The script now derives and
+> reports `volumes_covered` from the data, and its docstring records the trap. The
+> incorrect numbers were never committed.
+
+**Why the gate is still `UNRESOLVED`.** The gate wants "one raw MS
+(time-of-flight) signal". Deciding which of five per-event signal families is the
+time-of-flight mass spectrum is a determination about instrument channels, not
+something the script's regex should settle. That adjudication was **not** made
+here, on the same principle that keeps kill-test 1's verdict out of its script.
+
+**HYPOTHESIS** — the raw trace is carried by a per-event signal family rather than
+by `CDASPECTRA`, whose own label calls it a `"CASSINI CDA SPECTRA PEAKS TABLE"`.
+No confidence level is attached. It earns status only from the archive's
+`DOCUMENT/` description or from a successful extraction.
+
+### 4. Gate 1 route — Nature supplementary files — `UNRESOLVED`
+
+**Blocked, and not worked around.** The availability question was not answered.
+
+**MECHANICAL FACT** — `doi.org` resolves (`302`) to
+`https://www.nature.com/articles/s41586-023-05987-9`, and `www.nature.com`
+answers, but every article request is bounced (`303`) to
+`https://idp.nature.com/authorize?...`, and **`idp.nature.com` is denied**.
+Verbatim, from `python src/gate1_nature_supplementary.py` (new this session):
+
+```
+transport failure for https://www.nature.com/articles/s41586-023-05987-9:
+ProxyError(MaxRetryError("HTTPSConnectionPool(host='idp.nature.com', port=443):
+Max retries exceeded with url: /authorize?response_type=cookie&client_id=grover&
+redirect_uri=https%3A%2F%2Fwww.nature.com%2Farticles%2Fs41586-023-05987-9
+(Caused by ProxyError('Unable to connect to proxy', OSError('Tunnel connection
+failed: 403 Forbidden')))"))
+```
+
+Evidence: [`gate1_supplementary_availability.json`](gate1_supplementary_availability.json).
+
+**⚠️ Action required — allowlist `idp.nature.com`.** It is Nature's
+cookie-setting redirect target; `www.nature.com` being reachable is not
+sufficient, because no article page can be read without following it.
+
+The committed script enumerates supplementary and Extended Data links and
+classifies them by extension. Per the operator's instruction it reports
+**availability only** — it does not download, parse or interpret any file's
+contents, and stamps no verdict. It will run to completion unchanged once the
+host is allowlisted.
+
+### 5. The CDA email was not sent
+
+`reports/draft_cda_email.md` is untouched and remains unsent, per instruction.
+
+### Manifest note — two rows, one file
+
+**MECHANICAL FACT** — `data/MANIFEST.md` gained seven rows. Two of them record
+the same URL and the same SHA256
+(`184f8aee7e54433b7acfd4a3d4516bd70fbd2d0e18d3a8639b6bf949f883daba`) under two
+local names, `cumindex.tab` and `INDEX.TAB`. Both are true records: the first
+run stored the download under its URL basename, and the label-pointer fix then
+stored it under the name `CUMINDEX.LBL` actually declares. Rows are appended by
+committed code and are not hand-edited, so both were left in place rather than
+one being quietly deleted. Running the committed script today produces
+`INDEX.TAB` only.
+
+### Rule compliance
+
+- **Rule 2** — every downloaded file is manifested with URL, SHA256, size in
+  bytes and UTC timestamp.
+- **Rule 3** — `git ls-files data/` returns `data/MANIFEST.md` and nothing else;
+  `git check-ignore` confirms the PDF, both index tables and the MS products are
+  ignored. No raw archive data is staged.
+
+### Next session must
+
+1. **Adjudicate which product family carries the raw MS trace**, from the
+   archive's `DOCUMENT/` volume documentation rather than from family names, then
+   re-run kill-test 2 against a volume whose MS product carries rows —
+   `python src/killtest2_cda.py --volume COCDA_0101`.
+2. **Allowlist `idp.nature.com`**, then re-run
+   `python src/gate1_nature_supplementary.py` to get the availability answer for
+   Extended Data Tables 1 and 2. Kill-test 1 stays `UNRESOLVED` until then.
+3. **Merge Session 004's log entry** from PR #3 with this one; expect a conflict
+   at the top of this file and resolve it by keeping both entries.
+4. Note that a fresh environment needs `pip install cffi` after `pip install -e .`
+   — the system `cryptography` package fails to load its Rust bindings without it,
+   exactly as Session 003 predicted. This is an environment defect, so
+   `pyproject.toml` is still deliberately unchanged.
+
+---
+
 ## Session 003 — 2026-08-10 — Kill-test 1 executed; paper retrieved, table bodies not extractable
 
 **Branch:** `claude/host-reachability-check-2nhjpc`

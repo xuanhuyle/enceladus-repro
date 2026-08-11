@@ -1,0 +1,98 @@
+{
+  "check": "killtest2_product_survey",
+  "question": "Across every COCDA volume, which product families carry rows, and is any CDASPECTRA product non-empty?",
+  "source_label": "https://sbnarchive.psi.edu/pds3/cassini/cda/COCDA_0101/INDEX/CUMINDEX.LBL",
+  "source_table": "https://sbnarchive.psi.edu/pds3/cassini/cda/COCDA_0101/INDEX/CUMINDEX.TAB",
+  "label_pointer": "INDEX.TAB",
+  "pdr_keys": [
+    "LABEL",
+    "INDEX_TABLE"
+  ],
+  "table_key": "INDEX_TABLE",
+  "total_rows": 292423,
+  "columns": [
+    "FILE_SPECIFICATION_NAME",
+    "RECORD BYTES",
+    "FILE_RECORDS",
+    "DATA_SET_ID"
+  ],
+  "volumes_covered": [
+    "COCDA_0101"
+  ],
+  "volumes_covered_count": 1,
+  "families": [
+    {
+      "family": "MPSIGNALS",
+      "entries": 60178,
+      "entries_with_records_gt_zero": 60178,
+      "max_file_records": 19
+    },
+    {
+      "family": "QCSIGNALS",
+      "entries": 60178,
+      "entries_with_records_gt_zero": 60178,
+      "max_file_records": 18
+    },
+    {
+      "family": "QISIGNALS",
+      "entries": 60178,
+      "entries_with_records_gt_zero": 60178,
+      "max_file_records": 18
+    },
+    {
+      "family": "QTSIGNALS",
+      "entries": 55994,
+      "entries_with_records_gt_zero": 55994,
+      "max_file_records": 18
+    },
+    {
+      "family": "QPSIGNALS",
+      "entries": 55889,
+      "entries_with_records_gt_zero": 55889,
+      "max_file_records": 20
+    },
+    {
+      "family": "CDAAREA",
+      "entries": 1,
+      "entries_with_records_gt_zero": 1,
+      "max_file_records": 26
+    },
+    {
+      "family": "CDACOUNTER",
+      "entries": 1,
+      "entries_with_records_gt_zero": 1,
+      "max_file_records": 200
+    },
+    {
+      "family": "CDAEVENTS",
+      "entries": 1,
+      "entries_with_records_gt_zero": 0,
+      "max_file_records": 0
+    },
+    {
+      "family": "CDASETTINGS",
+      "entries": 1,
+      "entries_with_records_gt_zero": 1,
+      "max_file_records": 84
+    },
+    {
+      "family": "CDASPECTRA",
+      "entries": 1,
+      "entries_with_records_gt_zero": 1,
+      "max_file_records": 550
+    },
+    {
+      "family": "CDASTAT",
+      "entries": 1,
+      "entries_with_records_gt_zero": 1,
+      "max_file_records": 70
+    }
+  ],
+  "cdaspectra": {
+    "family": "CDASPECTRA",
+    "entries": 1,
+    "entries_with_records_gt_zero": 1,
+    "max_file_records": 550
+  },
+  "any_nonempty_cdaspectra": true
+}

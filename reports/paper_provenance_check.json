@@ -1,0 +1,17 @@
+{
+  "check": "paper_provenance",
+  "what_this_checks": "Whether bytes served today at the manifested URL hash to the SHA256 already recorded in data/MANIFEST.md. This is provenance, not authentication: it does not verify that the PDF is a genuine or correct copy of the published paper.",
+  "url": "https://www.geo.fu-berlin.de/en/geol/fachrichtungen/planet/projects/habitat_oasis/_layout/Postberg_2023_Nature618_Phosphates_Enceladus.pdf",
+  "manifest_path": "data/MANIFEST.md",
+  "target_path": "data/paper/Postberg_2023_Nature618_Phosphates_Enceladus.pdf",
+  "checked_at_utc": "2026-08-11T03:41:11Z",
+  "expected_sha256": "9d9d21c5acbcac3f16c9acb85afc101cea3dc46743d125c66e03324985b0cabe",
+  "expected_size_bytes": 16669185,
+  "expected_row_retrieved_utc": "2026-08-10T04:32:10Z",
+  "expected_row_url": "https://www.geo.fu-berlin.de/en/geol/fachrichtungen/planet/projects/habitat_oasis/_layout/Postberg_2023_Nature618_Phosphates_Enceladus.pdf",
+  "observed_sha256": "9d9d21c5acbcac3f16c9acb85afc101cea3dc46743d125c66e03324985b0cabe",
+  "observed_size_bytes": 16669185,
+  "size_match": true,
+  "sha256_match": true,
+  "status": "MATCH"
+}

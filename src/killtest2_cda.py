@@ -51,6 +51,41 @@ FINDINGS = REPO_ROOT / "reports" / "killtest2_findings.json"
 MAX_PRODUCT_BYTES = 50 * 1024 * 1024  # refuse to pull anything large
 HREF = re.compile(r'href=["\']([^"\']+)["\']', re.I)
 
+# File suffixes a PDS3 index may point at. Used only to recognise path-shaped
+# values; nothing is fetched on the strength of its extension alone.
+PDS_SUFFIXES = (".lbl", ".tab", ".dat", ".img", ".fmt", ".txt")
+
+
+def looks_like_path_column(series) -> bool:
+    """True when a column's *values* look like file paths.
+
+    Matching column names alone is not sufficient. COCDA_0001's index carries
+    both ``FILE_SPECIFICATION_NAME`` (the real path) and ``FILE_RECORDS`` (an
+    integer record count); the name regex matches both, and joining the record
+    count into the path yielded a corrupted URL (observed Session 005). Every
+    sampled value must be path-shaped, so an ambiguous column is rejected rather
+    than accepted on a majority vote.
+    """
+    sample = [str(v).strip().strip('"') for v in series.head(20)]
+    if not sample:
+        return False
+    return all("/" in v or v.lower().endswith(PDS_SUFFIXES) for v in sample)
+
+
+def product_url_for(rel: str, volume: str, volume_url: str) -> str:
+    """Resolve an index path to an absolute URL.
+
+    PDS3 ``FILE_SPECIFICATION_NAME`` is volume-relative on some volumes and
+    archive-root-relative on others. COCDA_0001 uses the latter — every value
+    begins with ``COCDA_0001/`` — so joining against the volume URL doubled the
+    volume segment and returned HTTP 404 (observed Session 005). The base is
+    chosen by inspecting the path itself rather than assuming either convention.
+    """
+    first_segment = rel.split("/", 1)[0]
+    if first_segment.lower() == volume.lower():
+        return urljoin(ARCHIVE_ROOT, rel)
+    return urljoin(volume_url, rel)
+
 
 def list_dir(url: str) -> list[str]:
     """Return hrefs from an Apache-style directory listing.
@@ -90,10 +125,25 @@ def pick_volume(explicit: str | None) -> str:
 
 
 def find_index_files(volume_url: str) -> dict[str, str]:
-    """Locate the volume's index table + label by walking the volume tree."""
+    """Locate the volume's index table + label by walking the volume tree.
+
+    The index subdirectory's name is *discovered* from the volume listing rather
+    than assumed. PDS3 volumes conventionally uppercase it (``INDEX/``) and
+    sbnarchive.psi.edu serves a case-sensitive path space, so a hardcoded
+    lowercase ``index/`` returns HTTP 404 (observed on COCDA_0001, Session 005).
+    Matching case-insensitively against the listing the server actually returns
+    avoids replacing one cased guess with another.
+    """
+    volume_entries = list_dir(volume_url)
+    index_dirs = [
+        entry for entry in volume_entries
+        if entry.endswith("/") and entry.rstrip("/").lower() == "index"
+    ]
+    # Some volumes keep index products at the volume root, so it is searched too.
+    search_urls = [urljoin(volume_url, entry) for entry in index_dirs] + [volume_url]
+
     found: dict[str, str] = {}
-    for sub in ("index/", ""):
-        url = urljoin(volume_url, sub)
+    for url in search_urls:
         try:
             entries = list_dir(url)
         except FetchError:
@@ -106,7 +156,8 @@ def find_index_files(volume_url: str) -> dict[str, str]:
             break
     if not found:
         raise FetchError(
-            f"no index.tab / index.lbl located under {volume_url}. "
+            f"no index.tab / index.lbl located under {volume_url} "
+            f"(searched, in order: {search_urls}). "
             "The volume layout differs from what this script expects; inspect "
             "the listing by hand rather than letting the script guess."
         )
@@ -168,11 +219,15 @@ def main() -> int:
         print(f"[killtest2] index rows = {len(table)}; columns = {list(table.columns)}")
 
         # Locate an MS (time-of-flight mass spectrum) product from the index.
-        path_cols = [c for c in table.columns if re.search(r"(path|file|product)", str(c), re.I)]
+        named_cols = [c for c in table.columns if re.search(r"(path|file|product)", str(c), re.I)]
+        path_cols = [c for c in named_cols if looks_like_path_column(table[c])]
+        findings["name_matched_columns"] = [str(c) for c in named_cols]
         findings["path_like_columns"] = [str(c) for c in path_cols]
         if not path_cols:
             raise FetchError(
-                f"no path/file column in index; columns were {list(table.columns)}. "
+                f"no column with path-shaped values in index; name matched "
+                f"{[str(c) for c in named_cols]}, all columns were "
+                f"{[str(c) for c in table.columns]}. "
                 "Cannot locate a product without guessing."
             )
 
@@ -193,7 +248,7 @@ def main() -> int:
 
         # Fetch and parse the first MS candidate.
         rel = ms_rows[0].strip().strip('"').replace("\\", "/").lstrip("/")
-        product_url = urljoin(volume_url, rel)
+        product_url = product_url_for(rel, volume, volume_url)
         findings["ms_product_url"] = product_url
         head = requests.head(product_url, timeout=60, allow_redirects=True)
         size = int(head.headers.get("content-length", "0"))
@@ -202,7 +257,57 @@ def main() -> int:
 
         dest = DATA_DIR / volume / Path(rel).name
         fetch(product_url, dest, note=f"{volume} raw MS (time-of-flight) product for kill-test 2")
+
+        # PDS3 labels here are DETACHED: the .LBL carries only the description and
+        # the data lives in a sibling file. Without it pdr warns "TABLE file not
+        # found in path" and yields an empty product (observed Session 005), which
+        # would otherwise be misread as a parse failure. The companion's name is
+        # taken from the label's ^TABLE pointer where that names a real file, and
+        # otherwise from the label's own basename, which is the archive's actual
+        # convention here — the pointer on COCDA_0001 reads "CDASPECTRA.TAB" while
+        # the file on disk is CDASPECTRA_99084_00100.TAB.
+        if dest.suffix.upper() == ".LBL":
+            companion = Path(rel).with_suffix(".TAB").as_posix()
+            data_url = product_url_for(companion, volume, volume_url)
+            findings["ms_data_file_url"] = data_url
+            probe = requests.head(data_url, timeout=60, allow_redirects=True)
+            if probe.status_code != 200:
+                raise FetchError(
+                    f"detached label {product_url} downloaded, but its companion data "
+                    f"file {data_url} returned HTTP {probe.status_code}. The data file "
+                    "is where the trace lives; refusing to report on the label alone."
+                )
+            data_bytes = int(probe.headers.get("content-length", "0"))
+            findings["ms_data_file_bytes"] = data_bytes
+            if data_bytes > MAX_PRODUCT_BYTES:
+                raise FetchError(
+                    f"MS data file {data_url} is {data_bytes} bytes; over cap "
+                    f"{MAX_PRODUCT_BYTES} bytes"
+                )
+            fetch(
+                data_url,
+                dest.with_suffix(".TAB"),
+                note=f"{volume} MS data file accompanying {dest.name} for kill-test 2",
+            )
+
         product = load_with_pdr(dest)
+
+        # An empty product is not a parsing failure, and must not be reported as
+        # one. COCDA_0001's only spectra product declares ROWS = 0 and its .TAB is
+        # a single blank record, so there is no trace in it to extract.
+        declared_rows = None
+        label_text = dest.read_text(encoding="utf-8", errors="replace")
+        rows_match = re.search(r"^\s*ROWS\s*=\s*(\d+)", label_text, re.M)
+        if rows_match:
+            declared_rows = int(rows_match.group(1))
+            findings["ms_declared_rows"] = declared_rows
+        if declared_rows == 0:
+            raise FetchError(
+                f"MS product {Path(rel).name} in {volume} is empty: its label declares "
+                f"ROWS = {declared_rows} and its data file is {findings.get('ms_data_file_bytes')} "
+                "bytes. Nothing was mis-parsed — there is no trace in this product. "
+                "Select a volume whose MS product carries rows (see --volume)."
+            )
 
         import matplotlib
         matplotlib.use("Agg")
