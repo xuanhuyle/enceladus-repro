@@ -98,22 +98,56 @@ def main() -> int:
     full_text = "\n".join(pages)
     findings["extracted_chars"] = len(full_text)
 
-    # Where do the Extended Data tables appear, if at all?
-    table_hits: dict[str, list[int]] = {}
-    for pattern in TABLE_HEADINGS:
-        hits = [i + 1 for i, page in enumerate(pages) if pattern.search(page)]
-        table_hits[pattern.pattern] = hits
-    findings["extended_data_table_pages"] = table_hits
+    # Per-page extracted length. A table page that yields only its caption is
+    # the signature of a table rendered as an image: the identifier scan below
+    # then reports absence-of-text, NOT absence-of-identifiers. Those imply
+    # opposite verdicts, so the adjudicator must be able to tell them apart.
+    findings["page_char_counts"] = {str(i + 1): len(p) for i, p in enumerate(pages)}
 
-    # If the tables are present, scan those pages specifically; otherwise scan
-    # the whole document so the report can say what *is* there.
-    target_pages = sorted({p for hits in table_hits.values() for p in hits})
+    # Where do the Extended Data tables appear, if at all? The phrase matches a
+    # real table heading AND a body-text cross-reference ("listed in Extended
+    # Data Table 1") equally well, so record the character offset of each match
+    # and separate the two. Heuristic, stated openly: a heading starts its page
+    # (offset below HEADING_MAX_OFFSET, allowing for a running header such as
+    # "Article"); anything later is a cross-reference. Raw offsets are kept so
+    # the adjudicator can check the split rather than trust it.
+    HEADING_MAX_OFFSET = 40
+    table_hits: dict[str, dict] = {}
+    for pattern in TABLE_HEADINGS:
+        occurrences = [
+            {"page": i + 1, "offset": m.start()}
+            for i, page in enumerate(pages)
+            for m in [pattern.search(page)]
+            if m
+        ]
+        heading_pages = sorted(
+            {o["page"] for o in occurrences if o["offset"] < HEADING_MAX_OFFSET}
+        )
+        xref_pages = sorted(
+            {o["page"] for o in occurrences if o["offset"] >= HEADING_MAX_OFFSET}
+        )
+        table_hits[pattern.pattern] = {
+            "occurrences": occurrences,
+            "heading_pages": heading_pages,
+            "cross_reference_pages": xref_pages,
+        }
+    findings["extended_data_table_pages"] = table_hits
+    findings["heading_offset_threshold_chars"] = HEADING_MAX_OFFSET
+
+    # Scan the pages that carry the tables themselves. Cross-reference pages are
+    # body prose and would dilute the scan with unrelated matches.
+    target_pages = sorted(
+        {p for hit in table_hits.values() for p in hit["heading_pages"]}
+    )
     findings["scanned_scope"] = (
-        f"pages {target_pages}" if target_pages else "whole document (tables not located)"
+        f"table heading pages {target_pages}"
+        if target_pages
+        else "whole document (table headings not located)"
     )
     scope_text = (
         "\n".join(pages[p - 1] for p in target_pages) if target_pages else full_text
     )
+    findings["scanned_scope_chars"] = len(scope_text)
 
     id_hits: dict[str, dict] = {}
     for name, pattern in IDENTIFIER_PATTERNS.items():
@@ -123,8 +157,16 @@ def main() -> int:
     findings["identifier_candidates"] = id_hits
 
     # A text layer can be absent in scanned PDFs; distinguish that from a real
-    # absence of identifiers.
+    # absence of identifiers. Document-wide presence is NOT sufficient: the body
+    # prose can carry a full text layer while the table pages carry none.
     findings["text_layer_present"] = len(full_text.strip()) > 500
+
+    # Verbatim text of each table page. These pages are short when the table is
+    # an image, so record them in full: the adjudicator can then read exactly
+    # what was and was not recovered instead of inferring it from a count.
+    findings["table_page_extracts"] = {
+        str(p): pages[p - 1] for p in target_pages
+    }
 
     FINDINGS.write_text(json.dumps(findings, indent=2), encoding="utf-8")
     print(json.dumps(findings, indent=2))
