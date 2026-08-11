@@ -1,0 +1,6 @@
+{
+  "gate": "killtest2",
+  "archive_root": "https://sbnarchive.psi.edu/pds3/cassini/cda/",
+  "status": "UNRESOLVED",
+  "blocker": "transport failure listing https://sbnarchive.psi.edu/pds3/cassini/cda/: ProxyError(MaxRetryError(\"HTTPSConnectionPool(host='sbnarchive.psi.edu', port=443): Max retries exceeded with url: /pds3/cassini/cda/ (Caused by ProxyError('Unable to connect to proxy', OSError('Tunnel connection failed: 403 Forbidden')))\"))"
+}

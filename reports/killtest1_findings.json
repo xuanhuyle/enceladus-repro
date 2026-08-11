@@ -1,0 +1,7 @@
+{
+  "gate": "killtest1",
+  "question": "Do the nine phosphate-bearing grains resolve to machine-readable identifiers usable against the PDS archive?",
+  "paper_url": "https://www.geo.fu-berlin.de/en/geol/fachrichtungen/planet/projects/habitat_oasis/_layout/Postberg_2023_Nature618_Phosphates_Enceladus.pdf",
+  "status": "UNRESOLVED",
+  "blocker": "transport failure for https://www.geo.fu-berlin.de/en/geol/fachrichtungen/planet/projects/habitat_oasis/_layout/Postberg_2023_Nature618_Phosphates_Enceladus.pdf: ProxyError(MaxRetryError(\"HTTPSConnectionPool(host='www.geo.fu-berlin.de', port=443): Max retries exceeded with url: /en/geol/fachrichtungen/planet/projects/habitat_oasis/_layout/Postberg_2023_Nature618_Phosphates_Enceladus.pdf (Caused by ProxyError('Unable to connect to proxy', OSError('Tunnel connection failed: 403 Forbidden')))\"))"
+}
