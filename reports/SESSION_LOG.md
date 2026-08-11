@@ -5,6 +5,121 @@ per gate, and evidence links. Newest session first.
 
 ---
 
+## Session 009 — 2026-08-11 — Pre-registered analysis plan written; no analysis run
+
+**Branch:** `claude/session-005-provenance-gate-6jxjb0`, restarted from `main` at
+`8100580` after PR #6 merged.
+
+**Open gate at session start:** kill-test 1, `UNRESOLVED` and unadjudicated.
+**Unchanged.** `reports/killtest1.md` untouched; no verdict stamped.
+
+### Gate summary
+
+| Gate | Verdict | Change this session |
+| --- | --- | --- |
+| Kill-test 1 | **`UNRESOLVED`** | none — not adjudicated |
+| Kill-test 2 | `PASS` | unchanged |
+
+### What this session did, and did not do
+
+**Pre-registration only.** [`ANALYSIS_PLAN_phosphate.md`](ANALYSIS_PLAN_phosphate.md)
+was written and committed **before any spectrum was touched**.
+
+**Not done, deliberately:** no MP signal product was fetched, no analysis was run,
+no result exists, and no analysis code was written. The one network access this
+session was `DOCINFO.TXT` (`2400` bytes, SHA256 `cb4cd57d…1271e3838`) — archive
+**documentation**, fetched to establish which instrument documents exist. No data
+product was retrieved.
+
+### The consolidation
+
+PR #6 (Sessions 007–008) merged into `main` as `8100580`.
+
+### What the plan fixes in advance
+
+- **Record selection** — an eight-step rule (S1–S8) keyed on `SPECTRUM_FLAG`,
+  the SIS-defined field meaning *"there exists a corresponding mass spectrum for
+  the particle"*, with MP product presence as an independent second filter. Ties
+  **abstain** rather than pick arbitrarily; all tied candidates are carried
+  forward and their spread reported.
+- **Processing chain** — TOF→mass anchored on the archive's own `SCALE_POS1`/
+  `SCALE_POS2`, baseline by median over the last `25` % of samples, normalisation
+  to unit total signal, co-addition on a `10`–`220` u grid at `0.1` u spacing.
+- **Success criterion** — `23`, `63`, `125`, `165`, `187` u present and `149` u
+  absent; tolerance `±1.0` u below `100` u and `±2.0` u above; present means a
+  local maximum at `≥5.0` σ_baseline; absent means the window maximum below it.
+- **Failure modes** — what would indict the pipeline rather than the paper, what
+  would be `FAIL`, and what would be `UNRESOLVED`.
+
+### Three design decisions worth flagging
+
+**1. A circularity guard.** A line used to anchor the mass scale cannot also
+serve as evidence for the criterion. If the archive's reference positions land on
+any of the six lines under test, that line is **struck from the criterion** for
+grains so anchored, and the striking is reported.
+
+**2. Saturn distance is excluded from selection.** Four of the nine grains
+already disagree with the archive on that column. Selecting on it would encode
+the disagreement into the sample.
+
+**3. "Type 3" is not `EVENT_QUALITY == 3`.** The paper's Type 3 is a spectral
+classification; the SIS's `EVENT_QUALITY == 3` means *"strong impact"*. Two
+taxonomies colliding on one numeral. The archive carries **no** Type 3 field, so
+Type 3 membership is taken only from the Extended Data tables. Recorded now so
+the conflation cannot happen later.
+
+### Eleven unsourced parameters registered — MECHANICAL FACT
+
+The plan carries a register of every parameter that could not be sourced. **Four
+are blocking**, and the analysis cannot run to completion without them:
+
+| # | Parameter | Status |
+| --- | --- | --- |
+| 1 | Mass-scale functional form (exponent) | **`UNRESOLVED`** |
+| 2 | Stretch factor / mass-scale constant | **`UNRESOLVED`** |
+| 3 | Offset between "impact time" and "trigger time" origins | **`UNRESOLVED`** |
+| 4 | CDA mass resolution m/Δm | **`UNRESOLVED`** |
+
+Items 5–11 (tolerance, baseline window, `5.0` σ threshold, ambiguity band, grid,
+minimum grain count, candidate time window) are **declared arbitrary and fixed
+pre-data**, so they cannot be tuned afterwards.
+
+**Item 3 is the sharpest find.** The SIS defines the MP table's `OFFSET_TIME` as
+*"Flight time measured from estimated time of impact"*, while the `CDASPECTRA`
+mass-scale anchors `SCALE_POS1`/`SCALE_POS2` are *"in second from trigger
+time"*. **Two different origins, with no stated offset between them.** Any mass
+scale computed without resolving this would be silently wrong.
+
+### Documentation available — MECHANICAL FACT
+
+**There is no CDA Data Handbook.** `DOCINFO.TXT` lists the `DOCUMENT/` directory
+in full: itself, plus `cda_sis_1_0` in `.doc`, `.pdf`, `.txt` and `.lbl`. The SIS
+is the only instrument document in the archive, so it is cited throughout and
+every choice it does not cover is registered as unsourced rather than guessed.
+
+**SIS §2.3.2, verbatim:** *"The calibration of the TOF mass spectrometer is still
+preliminary."*
+
+`SRAMAETAL2004B` (cited by the SIS) and Postberg et al. 2009b (cited in the
+instruction) are both **`UNRESOLVED` — not dereferenced from this repository**.
+Neither supplies a number to this plan.
+
+### Rule compliance
+
+- **Rule 2** — the one fetched file is manifested with URL, SHA256, size, UTC.
+- **Rule 3** — `git ls-files data/` returns `data/MANIFEST.md` alone.
+
+### Next session must
+
+1. **Adjudicate `killtest1.md` by hand.** The plan may not be executed until it
+   returns `PASS` (Rule 1).
+2. **Source blocking items 1–4**, or record them `UNRESOLVED` and stop. An
+   unsourced stretch factor is not something to estimate.
+3. Treat any change to a fixed parameter as requiring a new commit stating what
+   changed, why, and what the pre-change rule would have produced.
+
+---
+
 ## Session 008 — 2026-08-11 — Extended Data tables read from images; all nine identifiers resolve; four cross-checks disagree
 
 **Branch:** `claude/session-005-provenance-gate-6jxjb0` (PR #6 open, unmerged).

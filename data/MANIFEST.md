@@ -16,6 +16,7 @@ do not hand-edit them. Timestamps are UTC, at the moment of retrieval.
 | File (repo-relative) | Size | SHA256 | Retrieved (UTC) | Source URL | Note |
 | --- | --- | --- | --- | --- | --- |
 <!-- MANIFEST-ROWS -->
+| `data/cda/DOCUMENT/DOCINFO.TXT` | 2400 bytes | `cb4cd57d36a00c1161f6d7e7ea01fda441df0acce0faa5f51ef99ac1271e3838` | 2026-08-11T19:13:22Z | https://sbnarchive.psi.edu/pds3/cassini/cda/COCDA_0101/DOCUMENT/DOCINFO.TXT | CDA archive DOCUMENT directory manifest (analysis-plan sourcing) |
 | `data/cda/COCDA_0035/CDAEVENTS_07122_07152.TAB` | 7981568 bytes | `b1a824bcd8eb710fa9e7870cd8bbfdc49c8e0aea12217a38bbc1e7f2bc7db4c5` | 2026-08-11T18:29:29Z | https://sbnarchive.psi.edu/pds3/cassini/cda/COCDA_0035/DATA/CDAEVENTS_07122_07152.TAB | COCDA_0035 CDAEVENTS table for kill-test 1 identifier verification |
 | `data/cda/COCDA_0035/CDAEVENTS_07122_07152.LBL` | 44160 bytes | `04790979d30b41f5b6fd33fc0eb6742a31499f8507e1882018c5511413d224e5` | 2026-08-11T18:29:28Z | https://sbnarchive.psi.edu/pds3/cassini/cda/COCDA_0035/DATA/CDAEVENTS_07122_07152.LBL | COCDA_0035 CDAEVENTS label for kill-test 1 identifier verification |
 | `data/cda/COCDA_0030/CDAEVENTS_06336_06365.TAB` | 4182528 bytes | `001ffb57bcb91aa3ecdeeace9f29dc4908dfb3c14039f36446cb6f700deffe45` | 2026-08-11T18:29:26Z | https://sbnarchive.psi.edu/pds3/cassini/cda/COCDA_0030/DATA/CDAEVENTS_06336_06365.TAB | COCDA_0030 CDAEVENTS table for kill-test 1 identifier verification |
