@@ -2,28 +2,30 @@
 
 ## Verdict
 
-# `UNRESOLVED`
+# `PASS`
 
-**Reason changed in Session 005.** The archive is now reachable, the volume index
-parses with `pdr`, and an MS product was located and downloaded. The gate is
-still `UNRESOLVED`, but no longer for a network reason:
+**MECHANICAL FACT** — `python src/killtest2_cda.py --volume COCDA_0101` exited `0`
+and wrote [`killtest2_trace.png`](killtest2_trace.png). One raw CDA time-of-flight
+mass spectrum was downloaded from the PDS3 archive, parsed with `pdr`, and
+plotted with units on both axes.
 
-1. The product the script's MS pattern selects in `COCDA_0001` — `CDASPECTRA` —
-   is **empty**: its label declares `ROWS = 0` and its data file is `602` bytes,
-   exactly one `RECORD_BYTES` of blank padding. There is no trace in it to plot.
-2. The per-event signal families that do carry records (`QTSIGNALS`, `MPSIGNALS`,
-   `QCSIGNALS`, `QISIGNALS`, `QPSIGNALS`) were found only after the survey below.
-   **Which of them constitutes "the raw MS (time-of-flight) trace" is an
-   adjudication, not a mechanical determination**, and this session did not make
-   it. See "What still blocks the gate".
+| Quantity | Value |
+| --- | --- |
+| Product | `COCDA_0101/DATA/MPSIGNALS_17181_17258/MP_02860426.LBL` |
+| `PRODUCT_NAME` in label | `"CDA MP SIGNAL TABLE"` |
+| `START_TIME` in label | `2017-180T23:59:48` |
+| Rows declared by label | `1018` rows |
+| Samples parsed | `1018` samples — equal to the declared count |
+| Flight-time range | `0.00` to `44.1` microseconds |
+| Amplitude range | `-1.57` to `9.89` microvolts |
+| Label SHA256 | `2e344b3a2e4484b883f613c19c31c56420a2cdcb1524e8f5f75d72cfae74a33a` |
+| Data file SHA256 | `069af06e5cb9862fe4d2b4edc9a36745cda47a715e0a500d45af90d231a89274` |
 
-`reports/killtest2_trace.png` **does not exist**, and no placeholder has been
-created in its place.
+Both files are manifested in [`data/MANIFEST.md`](../data/MANIFEST.md). Machine-readable
+evidence: [`killtest2_findings.json`](killtest2_findings.json).
 
-> The previous version of this file stated "the blocker is network only" and
-> "`src/killtest2_cda.py` is complete and needs no edits." **Both statements are
-> now false** and are corrected below. They were true when written; the first
-> real run against the archive disproved them.
+Declared rows and parsed samples agree exactly, which is the check that
+distinguishes a real parse from a plausible-looking one.
 
 ---
 
@@ -36,154 +38,97 @@ event table with `pdr`, extract one raw MS (time-of-flight) signal, and plot it?
 
 ---
 
-## What ran, and how far it got
+## Which channel is the mass spectrum — SOURCED CLAIM
 
-**MECHANICAL FACT** — `python src/killtest2_cda.py`, Session 005, against
-`https://sbnarchive.psi.edu/pds3/cassini/cda/`. Machine-readable evidence:
-[`killtest2_findings.json`](killtest2_findings.json).
+This had to be settled before the gate could be answered, because COCDA volumes
+carry five per-event signal families and plotting the wrong one would have
+produced a convincing figure of the wrong quantity.
 
-| Step | Outcome |
-| --- | --- |
-| List archive root | **reached** — `100` `COCDA_*` volume directories listed |
-| Select one volume | `COCDA_0001` (the script's default: first in sorted order) |
-| Locate volume index | `COCDA_0001/INDEX/INDEX.LBL` + `INDEX.TAB` |
-| Download index | `4640` bytes label, `2717925` bytes table — both manifested |
-| **Parse index with `pdr`** | **succeeded** — keys `['LABEL', 'INDEX_TABLE']` |
-| Index contents | `25885` rows; columns `FILE_SPECIFICATION_NAME`, `RECORD BYTES`, `FILE_RECORDS`, `DATA_SET_ID` |
-| Locate MS product | `COCDA_0001/DATA/CDASPECTRA_99084_00100.LBL` — the only one of `25885` rows matching the MS pattern |
-| Download MS product | `68240` bytes label + `602` bytes data file — both manifested |
-| **Extract a trace** | **blocked — the product is empty** |
+Source: Cassini CDA Software Interface Specification, `CDA_SIS_1_0.TXT`,
+[`.../COCDA_0101/DOCUMENT/CDA_SIS_1_0.TXT`](https://sbnarchive.psi.edu/pds3/cassini/cda/COCDA_0101/DOCUMENT/CDA_SIS_1_0.TXT),
+SHA256 `c9e08012187c3c8d7c8c17bdef9a98790314d7c374aab1dccc07d22ba5f149ba`.
+Extracted by `src/identify_ms_channel.py` into
+[`ms_channel_identification.json`](ms_channel_identification.json).
 
-The parsing gate has now been genuinely exercised for the first time: `pdr` read
-a real PDS3 label from the real archive and returned a real table. That was never
-true before Session 005.
+Section 2.1.3, "TOF mass spectrometer", verbatim:
 
----
+> "The TOF mass spectrometer consists of the chemical analyser target (CAT),
+> chemical analyser grid located 3 mm in front of the CAT, and the multiplier
+> dynodes connected with the Dynode Logarithmic Amplifier (**MP signal**). Due to
+> the strong electric field between the grid and the CAT, positive plasma ions
+> are separated very quickly from the plasma and accelerated toward the
+> multiplier, **forming a time-of-flight mass spectrum**."
 
-## Why the selected product is empty — MECHANICAL FACT
+Per-family table descriptions, verbatim from the same SIS:
 
-`COCDA_0001/DATA/CDASPECTRA_99084_00100.LBL` declares, verbatim:
-
-```
-RECORD_BYTES                    = 602
-FILE_RECORDS                    = 0
-START_TIME                      = "1999-084T00:00:00"
-STOP_TIME                       = "2000-100T00:00:00"
- ROWS                           = 0
-```
-
-Its data file `CDASPECTRA_99084_00100.TAB` is `602` bytes — one `RECORD_BYTES`
-of blank padding. `START_TIME`/`STOP_TIME` place this volume in early cruise,
-years before Saturn orbit insertion.
-
-**This is not a parse failure and must not be recorded as `FAIL`.** Nothing was
-mis-read; the product genuinely contains zero rows. The script now says so
-explicitly rather than reporting the misleading "no 1-D numeric signal".
-
----
-
-## Where the records actually are — MECHANICAL FACT
-
-`python src/killtest2_survey_products.py` reads a volume index in full and counts
-records per product family. Evidence:
-[`killtest2_product_survey.json`](killtest2_product_survey.json).
-
-Covering **`COCDA_0101` only** (`292423` index entries):
-
-| Family | Entries | Entries with `FILE_RECORDS` > 0 | Max `FILE_RECORDS` |
+| Family | `PRODUCT_NAME` | `TABLE` `DESCRIPTION` | Second column |
 | --- | --- | --- | --- |
-| `MPSIGNALS` | `60178` | `60178` | `19` records |
-| `QCSIGNALS` | `60178` | `60178` | `18` records |
-| `QISIGNALS` | `60178` | `60178` | `18` records |
-| `QTSIGNALS` | `55994` | `55994` | `18` records |
-| `QPSIGNALS` | `55889` | `55889` | `20` records |
-| `CDAAREA` | `1` | `1` | `26` records |
-| `CDACOUNTER` | `1` | `1` | `200` records |
-| `CDAEVENTS` | `1` | `0` | `0` records |
-| `CDASETTINGS` | `1` | `1` | `84` records |
-| `CDASPECTRA` | `1` | `1` | `550` records |
-| `CDASTAT` | `1` | `1` | `70` records |
+| **MP** | `"CDA MP SIGNAL TABLE"` | "Signal value at the ion multiplier" | `AMPLITUDE` [`MICROVOLTS`] |
+| QI | `"CDA QI SIGNAL TABLE"` | "Ion charge signal generated by an impact." | `RECONSTRUCTED_QI_CHARGE` [`COULOMBS`] |
+| QT | `"CASSINI CDA DUST ANALYSER QT SIGNAL TABLE"` | "Electron charge signal monitored at the IID target generated by an impact." | `RECONSTRUCTED_QT_CHARGE` [`COULOMBS`] |
+| QC | `"CASSINI CDA DUST ANALYSER QC SIGNAL TABLE"` | "Electron charge signal monitored at the CAT target generated by an impact." | `RECONSTRUCTED_QC_CHARGE` [`COULOMBS`] |
+| QP | `"CDA QP SIGNAL TABLE"` | "Charge induced by the particle on the charge grid device" | `RECONSTRUCTED_QP_CHARGE` [`COULOMBS`] |
 
-Two things follow, both narrow:
+The decisive discriminator is the **time axis**, not the family name. MP's
+`OFFSET_TIME` is described as "**Flight time measured from estimated time of
+impact**". All four Q-channels describe theirs as "Time after triggering event"
+and pair it with a calibrated charge in coulombs.
 
-- **`CDASPECTRA` is not empty everywhere.** It is empty in `COCDA_0001` and
-  carries `550` records in `COCDA_0101`. The emptiness is a property of the
-  volume selected, not of the family.
-- **The bulk of the volume is per-event signal products** in five families, each
-  with tens of thousands of entries, each entry carrying records.
+**The Session 005 HYPOTHESIS is CONFIRMED and is now a SOURCED CLAIM:** MP is the
+multiplier time-of-flight mass spectrum; QP, QC, QI and QT are charge channels.
 
-> **Scope warning.** `CUMINDEX.TAB` on this archive is **not** cumulative across
-> volumes: every entry in `COCDA_0101`'s copy carries the `COCDA_0101` prefix.
-> The table above therefore describes **one volume of one hundred**. An earlier
-> draft of the survey script asserted archive-wide coverage; that claim was
-> wrong, was caught by reading the parsed values, and has been corrected in the
-> script's docstring and output.
+`CDASPECTRA` — which the script's original MS pattern matched — is not the raw
+trace at all. Its own label calls it a `"CASSINI CDA SPECTRA PEAKS TABLE"`: an
+evaluated peak listing derived from the spectrum, not the spectrum itself.
 
 ---
 
-## Four defects fixed in `src/killtest2_cda.py` — MECHANICAL FACT
+## What changed to make the gate pass
 
-Each was found by running against real archive files, and each is fixed by
-*discovering* the archive's actual shape rather than substituting a new guess.
+Session 005 left the gate `UNRESOLVED` for two reasons, both now resolved:
 
-1. **Index directory case.** The script requested `<volume>/index/`, which
-   returns HTTP `404`; the directory is `<volume>/INDEX/`, which returns HTTP
-   `200`. The server's path space is case-sensitive. Fixed by matching the
-   volume listing case-insensitively and using the name the server returned.
-2. **Path column contamination.** The column filter `(path|file|product)` matched
-   both `FILE_SPECIFICATION_NAME` (the path) and `FILE_RECORDS` (an integer
-   count), and the two were joined into one string — producing a URL ending
-   `...CDASPECTRA_99084_00100.LBL 602`. Fixed by requiring every sampled value in
-   a candidate column to be path-shaped, so a column is rejected on its values,
-   not accepted on its name.
-3. **Doubled volume segment.** `FILE_SPECIFICATION_NAME` is archive-root-relative
-   here — every value already begins `COCDA_0001/` — so joining against the
-   volume URL produced `.../COCDA_0001/COCDA_0001/DATA/...` and HTTP `404`. Fixed
-   by choosing the base from the path's own first segment, which handles both
-   PDS3 conventions without assuming either.
-4. **Detached labels.** These `.LBL` files carry no data; the table lives in a
-   sibling file. Without it `pdr` warns `TABLE file ... not found in path` and
-   returns an empty product — which the script would have reported as a missing
-   signal. Fixed by fetching the companion data file and failing loudly if it is
-   absent.
+1. **Wrong volume.** The script's default (`sorted(volumes)[0]` → `COCDA_0001`)
+   lands on an early-cruise volume, `1999-084` to `2000-100`, whose only
+   spectra product declares `ROWS = 0`. `COCDA_0101` covers `2017` and carries
+   real data.
+2. **Wrong product family.** The MS pattern `\bMS\b|mass|tof|spectr` matched only
+   `CDASPECTRA`. It now matches the MP per-event products, cited in the source to
+   the SIS section quoted above.
 
-A fifth defect of the same kind was fixed in the survey script: `CUMINDEX.LBL`
-points at `"INDEX.TAB"`, not at `"CUMINDEX.TAB"`, so the downloaded table has to
-be stored under the name the label declares or `pdr` cannot find it.
+A third change was needed to plot it honestly: an MP product is a **two-column
+table**, not a bare array. The plot is now `AMPLITUDE` against `OFFSET_TIME`,
+with both units read from the label at run time rather than hardcoded, so a
+volume that changed them could not silently mislabel the axes. The previous code
+would have plotted a sample index against "instrument DN, uncalibrated" — neither
+of which is what this product contains.
+
+Five defects fixed across Sessions 005–006, each found against real archive files:
+index directory case (`index/` → `404`, `INDEX/` → `200`); path-column
+contamination (`FILE_RECORDS` joined into the path); doubled volume segment;
+detached labels (companion `.TAB` never fetched); and the label-pointer mismatch
+where `CUMINDEX.LBL` points at `"INDEX.TAB"`.
 
 ---
 
-## What still blocks the gate
+## A correction to the Session 005 survey
 
-**`UNRESOLVED`, and the remaining step is an adjudication this session did not
-make.** The gate asks for "one raw MS (time-of-flight) signal". Five per-event
-signal families carry records. Deciding which family is the time-of-flight mass
-spectrum — and whether a `~18`-record product is the waveform or a peak listing —
-is a scientific determination about instrument channels, not something a regex
-should settle. Per the same principle that keeps kill-test 1's verdict out of its
-script, that call is left to a reviewing session.
+**MECHANICAL FACT** — the product survey reported `max_FILE_RECORDS` of `19`
+records for `MPSIGNALS`. That column describes the **label** file indexed by
+`FILE_SPECIFICATION_NAME`, not the data table it points at. The MP product opened
+here declares `1018` rows and parsed to `1018` samples.
 
-**HYPOTHESIS** — the raw time-of-flight trace is carried by one of the per-event
-signal families rather than by `CDASPECTRA`, whose label calls it a
-`"CASSINI CDA SPECTRA PEAKS TABLE"` and describes it as a peak evaluation. This
-is flagged as conjecture, carries no confidence level, and earns status only by
-being confirmed against the archive's own `DOCUMENT/` description or by a
-successful extraction.
+**`FILE_RECORDS` in the index must not be read as the sample count of a
+spectrum.** The survey's family counts stand; that one column's meaning was
+misread, and no claim in this report rests on it.
 
 ---
 
-## To resolve
+## What this does *not* establish
 
-1. Adjudicate which product family carries the raw MS trace, from the archive's
-   `DOCUMENT/` volume documentation rather than from the family names.
-2. Point the script at a volume whose MS product carries rows — `--volume` is
-   already supported, and `COCDA_0101` is known to carry `550` records in
-   `CDASPECTRA`:
-   ```bash
-   python src/killtest2_cda.py --volume COCDA_0101
-   ```
-3. Replace this verdict with `PASS` or `FAIL` from the actual outcome, and link
-   `killtest2_trace.png` as evidence.
-
-A `FAIL` still requires the archive to be reachable **and** a product to refuse
-to parse. That has not happened: every product opened so far parsed correctly.
+- **It is one trace from one event.** The gate asked for one; this is one. It
+  says nothing about phosphate, about Enceladus, or about the reproduction
+  target. Kill-test 2 is a toolchain gate.
+- **The trace is uncalibrated and unidentified.** No mass scale was applied and
+  no peak was assigned. The x-axis is flight time in microseconds, exactly as the
+  archive supplies it.
+- **Kill-test 1 remains `UNRESOLVED`** and is unaffected by this result.
