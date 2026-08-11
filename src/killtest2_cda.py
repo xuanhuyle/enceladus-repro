@@ -55,6 +55,28 @@ HREF = re.compile(r'href=["\']([^"\']+)["\']', re.I)
 # values; nothing is fetched on the strength of its extension alone.
 PDS_SUFFIXES = (".lbl", ".tab", ".dat", ".img", ".fmt", ".txt")
 
+# Which per-event family carries the time-of-flight mass spectrum.
+#
+# SOURCED CLAIM — Cassini CDA Software Interface Specification, CDA_SIS_1_0.TXT,
+# https://sbnarchive.psi.edu/pds3/cassini/cda/COCDA_0101/DOCUMENT/CDA_SIS_1_0.TXT
+# Section 2.1.3, "TOF mass spectrometer", verbatim: "The TOF mass spectrometer
+# consists of the chemical analyser target (CAT), chemical analyser grid located
+# 3 mm in front of the CAT, and the multiplier dynodes connected with the Dynode
+# Logarithmic Amplifier (MP signal). ... positive plasma ions are separated very
+# quickly from the plasma and accelerated toward the multiplier, forming a
+# time-of-flight mass spectrum."
+#
+# The MP table alone describes its time axis as flight time: OFFSET_TIME
+# [MICROSECONDS] is "Flight time measured from estimated time of impact", and
+# AMPLITUDE [MICROVOLTS] is "Signal value provided by the multiplier channel".
+# QI, QT, QC and QP all measure "Time after triggering event" against a
+# RECONSTRUCTED_*_CHARGE in COULOMBS — they are charge channels, not spectra.
+# Evidence: reports/ms_channel_identification.json, from src/identify_ms_channel.py.
+#
+# The earlier pattern (r"\bMS\b|mass|tof|spectr") matched only CDASPECTRA, the
+# "SPECTRA PEAKS TABLE" — an evaluated peak listing, not the raw trace.
+MS_PRODUCT = re.compile(r"(?:^|/)MPSIGNALS[^/]*/|(?:^|/)MP_\d+\.(?:LBL|TAB)$", re.I)
+
 
 def looks_like_path_column(series) -> bool:
     """True when a column's *values* look like file paths.
@@ -234,7 +256,7 @@ def main() -> int:
         ms_rows = []
         for _, row in table.iterrows():
             joined = " ".join(str(row[c]) for c in path_cols)
-            if re.search(r"\bMS\b|mass|tof|spectr", joined, re.I):
+            if MS_PRODUCT.search(joined):
                 ms_rows.append(joined)
         findings["ms_candidate_count"] = len(ms_rows)
         findings["ms_candidate_sample"] = ms_rows[:10]
@@ -314,26 +336,64 @@ def main() -> int:
         import matplotlib.pyplot as plt
         import numpy as np
 
-        signal = None
+        # An MP product is a two-column table, not a bare array: OFFSET_TIME
+        # against AMPLITUDE. Both axes therefore carry the units the label itself
+        # declares, rather than a sample index and an uncalibrated DN count.
+        ms_table = None
         for key in getattr(product, "keys", lambda: [])():
             obj = product[key]
-            arr = np.asarray(obj) if not hasattr(obj, "columns") else None
-            if arr is not None and arr.ndim == 1 and arr.size > 16 and np.issubdtype(arr.dtype, np.number):
-                signal = arr
+            if hasattr(obj, "columns"):
+                ms_table = obj
                 findings["ms_signal_key"] = str(key)
                 break
-        if signal is None:
-            raise FetchError(f"no 1-D numeric signal in MS product; keys {list(product.keys())}")
+        if ms_table is None:
+            raise FetchError(
+                f"no tabular object in MS product; keys {list(product.keys())}"
+            )
 
-        findings["ms_signal_samples"] = int(signal.size)
+        cols = {str(c).upper(): c for c in ms_table.columns}
+        if "OFFSET_TIME" not in cols or "AMPLITUDE" not in cols:
+            raise FetchError(
+                "MS product parsed, but it lacks the OFFSET_TIME/AMPLITUDE columns "
+                f"the SIS specifies for an MP signal table; columns were "
+                f"{[str(c) for c in ms_table.columns]}. Refusing to plot a column "
+                "chosen by guess."
+            )
+
+        time_us = np.asarray(ms_table[cols["OFFSET_TIME"]], dtype=float)
+        amplitude_uv = np.asarray(ms_table[cols["AMPLITUDE"]], dtype=float)
+        if time_us.size < 2:
+            raise FetchError(
+                f"MS product has {time_us.size} row(s); a trace needs at least two "
+                "points. Nothing was mis-parsed."
+            )
+
+        # Units are read off the label rather than hardcoded, so a future volume
+        # that changes them cannot silently mislabel the axes.
+        def unit_for(column: str, fallback: str) -> str:
+            block = re.search(
+                rf'NAME\s*=\s*"{column}".*?UNIT\s*=\s*"([^"]+)"', label_text, re.S
+            )
+            return block.group(1).strip() if block else fallback
+
+        time_unit = unit_for("OFFSET_TIME", "MICROSECONDS")
+        amp_unit = unit_for("AMPLITUDE", "MICROVOLTS")
+        findings["ms_signal_samples"] = int(time_us.size)
+        findings["ms_time_unit"] = time_unit
+        findings["ms_amplitude_unit"] = amp_unit
+        findings["ms_time_range"] = [float(np.nanmin(time_us)), float(np.nanmax(time_us))]
+        findings["ms_amplitude_range"] = [
+            float(np.nanmin(amplitude_uv)), float(np.nanmax(amplitude_uv))
+        ]
 
         fig, ax = plt.subplots(figsize=(10, 4.5))
-        ax.plot(np.arange(signal.size), signal, lw=0.7)
-        ax.set_xlabel("Time-of-flight sample index [dimensionless]")
-        ax.set_ylabel("Raw signal amplitude [instrument DN, uncalibrated]")
+        ax.plot(time_us, amplitude_uv, lw=0.9, marker="o", ms=3)
+        ax.set_xlabel(f"Flight time from estimated impact [{time_unit.lower()}]")
+        ax.set_ylabel(f"Multiplier signal amplitude [{amp_unit.lower()}]")
         ax.set_title(
-            f"KILL-TEST 2 — raw CDA MS trace\n{volume} · {Path(rel).name} · "
-            f"{signal.size} samples (MECHANICAL FACT: parsed by src/killtest2_cda.py)"
+            f"KILL-TEST 2 — raw CDA MP time-of-flight mass spectrum\n"
+            f"{volume} · {Path(rel).name} · {time_us.size} samples "
+            f"(MECHANICAL FACT: parsed by src/killtest2_cda.py)"
         )
         ax.grid(alpha=0.3)
         fig.tight_layout()

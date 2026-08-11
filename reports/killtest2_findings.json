@@ -1,18 +1,18 @@
 {
   "gate": "killtest2",
   "archive_root": "https://sbnarchive.psi.edu/pds3/cassini/cda/",
-  "volume": "COCDA_0001",
-  "volume_url": "https://sbnarchive.psi.edu/pds3/cassini/cda/COCDA_0001/",
+  "volume": "COCDA_0101",
+  "volume_url": "https://sbnarchive.psi.edu/pds3/cassini/cda/COCDA_0101/",
   "index_files": {
-    "index.lbl": "https://sbnarchive.psi.edu/pds3/cassini/cda/COCDA_0001/INDEX/INDEX.LBL",
-    "index.tab": "https://sbnarchive.psi.edu/pds3/cassini/cda/COCDA_0001/INDEX/INDEX.TAB"
+    "index.lbl": "https://sbnarchive.psi.edu/pds3/cassini/cda/COCDA_0101/INDEX/INDEX.LBL",
+    "index.tab": "https://sbnarchive.psi.edu/pds3/cassini/cda/COCDA_0101/INDEX/INDEX.TAB"
   },
   "index_pdr_keys": [
     "LABEL",
     "INDEX_TABLE"
   ],
   "index_table_key": "INDEX_TABLE",
-  "index_n_rows": 25885,
+  "index_n_rows": 292423,
   "index_columns": [
     "FILE_SPECIFICATION_NAME",
     "RECORD BYTES",
@@ -26,14 +26,35 @@
   "path_like_columns": [
     "FILE_SPECIFICATION_NAME"
   ],
-  "ms_candidate_count": 1,
+  "ms_candidate_count": 60178,
   "ms_candidate_sample": [
-    "COCDA_0001/DATA/CDASPECTRA_99084_00100.LBL"
+    "COCDA_0101/DATA/MPSIGNALS_17181_17258/MP_02860426.LBL",
+    "COCDA_0101/DATA/MPSIGNALS_17181_17258/MP_02860427.LBL",
+    "COCDA_0101/DATA/MPSIGNALS_17181_17258/MP_02860428.LBL",
+    "COCDA_0101/DATA/MPSIGNALS_17181_17258/MP_02860429.LBL",
+    "COCDA_0101/DATA/MPSIGNALS_17181_17258/MP_02860430.LBL",
+    "COCDA_0101/DATA/MPSIGNALS_17181_17258/MP_02860431.LBL",
+    "COCDA_0101/DATA/MPSIGNALS_17181_17258/MP_02860432.LBL",
+    "COCDA_0101/DATA/MPSIGNALS_17181_17258/MP_02860433.LBL",
+    "COCDA_0101/DATA/MPSIGNALS_17181_17258/MP_02860434.LBL",
+    "COCDA_0101/DATA/MPSIGNALS_17181_17258/MP_02860435.LBL"
   ],
-  "ms_product_url": "https://sbnarchive.psi.edu/pds3/cassini/cda/COCDA_0001/DATA/CDASPECTRA_99084_00100.LBL",
-  "ms_data_file_url": "https://sbnarchive.psi.edu/pds3/cassini/cda/COCDA_0001/DATA/CDASPECTRA_99084_00100.TAB",
-  "ms_data_file_bytes": 602,
-  "ms_declared_rows": 0,
-  "status": "UNRESOLVED",
-  "blocker": "MS product CDASPECTRA_99084_00100.LBL in COCDA_0001 is empty: its label declares ROWS = 0 and its data file is 602 bytes. Nothing was mis-parsed \u2014 there is no trace in this product. Select a volume whose MS product carries rows (see --volume)."
+  "ms_product_url": "https://sbnarchive.psi.edu/pds3/cassini/cda/COCDA_0101/DATA/MPSIGNALS_17181_17258/MP_02860426.LBL",
+  "ms_data_file_url": "https://sbnarchive.psi.edu/pds3/cassini/cda/COCDA_0101/DATA/MPSIGNALS_17181_17258/MP_02860426.TAB",
+  "ms_data_file_bytes": 19342,
+  "ms_declared_rows": 1018,
+  "ms_signal_key": "TABLE",
+  "ms_signal_samples": 1018,
+  "ms_time_unit": "MICROSECONDS",
+  "ms_amplitude_unit": "MICROVOLTS",
+  "ms_time_range": [
+    0.0,
+    44.1
+  ],
+  "ms_amplitude_range": [
+    -1.57,
+    9.89
+  ],
+  "plot": "reports/killtest2_trace.png",
+  "status": "PASS"
 }

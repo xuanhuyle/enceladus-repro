@@ -5,6 +5,158 @@ per gate, and evidence links. Newest session first.
 
 ---
 
+## Session 006 — 2026-08-11 — Kill-test 2 `PASS`; MS channel identified from primary documentation; polling rule added
+
+**Branch:** `claude/session-005-provenance-gate-6jxjb0`, restarted from `main` at
+`5cf4287` after PRs #3 and #4 merged.
+
+**Open gate at session start:** kill-test 1, the go/no-go. **Still `UNRESOLVED`**
+— not adjudicated this session. Kill-test 2 was run ahead of it by operator
+instruction; that ordering is the operator's call and is recorded here rather
+than silently taken.
+
+### Gate summary
+
+| Gate | Verdict | Change this session |
+| --- | --- | --- |
+| Kill-test 1 | **`UNRESOLVED`** | not adjudicated; its Nature route now answered on availability (below) |
+| **Kill-test 2** | **`PASS`** | **first pass** — one raw MP time-of-flight spectrum parsed and plotted |
+
+### 0. Polling stopped, and a rule added — MECHANICAL FACT
+
+Session 005 scheduled twelve consecutive hourly check-ins on a draft pull request
+awaiting operator review. Every one returned an identical result, because a pull
+request that needs a human does not change because it was polled. All twelve
+triggers were deleted; other sessions' triggers were left untouched.
+
+A standing rule was added to `CLAUDE.md` under Working practice, committed
+`06bec02` **before any other work this session**:
+
+> **Never schedule a check for a state change only the user can cause. Ask the
+> user instead, then stop.**
+
+### 1. Consolidation — MECHANICAL FACT
+
+| Step | Result |
+| --- | --- |
+| PR #3 (Session 004) → `main` | merged as `2bb855c` |
+| PR #4 (Session 005) → `main` | merged as `5cf4287` |
+
+The predicted `SESSION_LOG.md` conflict materialised on the second merge and was
+resolved by **keeping both entries**, Session 005 above Session 004. The
+resolution was verified programmatically: all six entries present, none
+duplicated, no conflict markers. Neither side was dropped.
+
+### 2. Which channel is the mass spectrum — HYPOTHESIS → SOURCED CLAIM
+
+Session 005 left this as a flagged conjecture. It is now settled against the
+archive's own Software Interface Specification, `CDA_SIS_1_0.TXT`, SHA256
+`c9e08012187c3c8d7c8c17bdef9a98790314d7c374aab1dccc07d22ba5f149ba`. Extracted
+verbatim by `src/identify_ms_channel.py`;
+evidence [`ms_channel_identification.json`](ms_channel_identification.json).
+
+SIS §2.1.3 names the channel outright: the multiplier dynodes are "connected with
+the Dynode Logarithmic Amplifier (**MP signal**)", and the accelerated ions form
+"a time-of-flight mass spectrum".
+
+The discriminator is the time axis, not the family name. **MP**'s `OFFSET_TIME`
+is "Flight time measured from estimated time of impact", paired with `AMPLITUDE`
+in `MICROVOLTS`. **QI, QT, QC and QP** all read "Time after triggering event",
+paired with a `RECONSTRUCTED_*_CHARGE` in `COULOMBS` — charge channels, not
+spectra.
+
+**The working hypothesis is CONFIRMED.** `CDASPECTRA`, which the old MS pattern
+matched, is not the raw trace: its label calls it a `"CASSINI CDA SPECTRA PEAKS
+TABLE"`, an evaluated peak listing.
+
+### 3. Kill-test 2 — `PASS`
+
+Full write-up: [`killtest2.md`](killtest2.md), verdict replaced.
+
+**MECHANICAL FACT** — `python src/killtest2_cda.py --volume COCDA_0101` exited
+`0` and wrote [`killtest2_trace.png`](killtest2_trace.png), which had never
+existed on any branch.
+
+| Quantity | Value |
+| --- | --- |
+| Product | `COCDA_0101/DATA/MPSIGNALS_17181_17258/MP_02860426.LBL` |
+| Rows declared / samples parsed | `1018` rows / `1018` samples — exact agreement |
+| Flight time | `0.00` to `44.1` microseconds |
+| Amplitude | `-1.57` to `9.89` microvolts |
+
+Declared-versus-parsed agreement is the check separating a real parse from a
+plausible-looking one.
+
+The plot is `AMPLITUDE` against `OFFSET_TIME`, with **both units read from the
+label at run time** rather than hardcoded. The previous code would have plotted a
+sample index against "instrument DN, uncalibrated" — neither of which this
+product contains.
+
+**Correction to the Session 005 survey.** It reported `max_FILE_RECORDS` of `19`
+records for `MPSIGNALS`. That column describes the **label** file, not the data
+table it points at; the product opened here has `1018` rows. `FILE_RECORDS` must
+not be read as a spectrum's sample count. The family counts stand, and no claim
+in this session rests on that column.
+
+**Scope.** This is one trace from one event. It says nothing about phosphate,
+about Enceladus, or about the reproduction target, and the trace is uncalibrated
+with no peak assigned.
+
+### 4. Gate 1 route — Nature supplementary availability — answered
+
+`idp.nature.com` was allowlisted between sessions and now answers, so the
+Session 005 blocker is cleared. `python src/gate1_nature_supplementary.py` exited
+`0` and read the article landing page (`500808` bytes, manifested).
+
+**MECHANICAL FACT** — availability, contents not opened:
+
+| Finding | Value |
+| --- | --- |
+| Supplementary / Extended Data links | `15` |
+| Table pages published | `4` — `/tables/1` through `/tables/4` |
+| References to `.xlsx`/`.xls`/`.csv`/`.tsv`/`.zip` anywhere on the page | **`0`** |
+| Any machine-readable tabular asset | **`False`** |
+
+**The answer is no.** Extended Data Tables 1 and 2 are **not** published in
+xlsx/csv. Nature renders them as HTML table pages. There are no supplementary
+data-file downloads on the article page in any tabular format.
+
+> **A wrong claim caught before it was reported.** The first run of this check
+> returned `0` table links, because the link filter keyed on anchor text and
+> Nature's table anchors do not say "Extended Data" — it had matched all eleven
+> Extended Data *Figures* and silently missed all four *table* pages. Grepping the
+> manifested HTML directly exposed the gap. The filter now includes `/tables/N`,
+> and the negative half of the answer is backed by explicit page-wide counts
+> rather than by a filter returning nothing.
+
+**HYPOTHESIS** — the HTML table pages carry the table bodies that would not
+extract from the publisher PDF, where they are image- or vector-rendered. No
+confidence level is attached; the pages were **not** opened this session. It
+earns status only by a session actually reading them.
+
+**Provenance caveat — MECHANICAL FACT.** The landing page is **not byte-stable**:
+two fetches minutes apart produced `500802` and `500808` bytes with different
+SHA256 values. Its manifest rows record what was retrieved at that instant; they
+are not a stable identifier for the page, unlike the archive files.
+
+### Rule compliance
+
+- **Rule 2** — every downloaded file manifested with URL, SHA256, size in bytes
+  and UTC timestamp.
+- **Rule 3** — `git ls-files data/` returns `data/MANIFEST.md` alone.
+
+### Next session must
+
+1. **Adjudicate kill-test 1**, which is still the open go/no-go. The concrete
+   route is now known: read the four Nature HTML table pages and determine
+   whether Extended Data Tables 1 and 2 carry per-grain identifiers. That is a
+   contents question, deliberately left untouched here.
+2. Treat kill-test 2's `PASS` as covering the **toolchain only**. It licenses no
+   claim about phosphate or about Enceladus.
+3. Not re-derive the MS channel: it is a SOURCED CLAIM now, cited to the SIS.
+
+---
+
 ## Session 005 — 2026-08-11 — Archive reachable; kill-test 2 exercised for real; paper bytes independently confirmed
 
 **Branch:** `claude/session-005-provenance-gate-6jxjb0`, based on `main` at

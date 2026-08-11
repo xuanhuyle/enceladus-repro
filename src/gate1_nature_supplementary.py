@@ -62,10 +62,21 @@ MACHINE_READABLE = (".xlsx", ".xls", ".csv", ".tsv", ".txt", ".json", ".xml")
 NOT_MACHINE_READABLE = (".pdf", ".docx", ".doc", ".jpg", ".jpeg", ".png", ".tif", ".tiff")
 
 # Link families Nature uses for supplementary and Extended Data assets.
+# ``/tables/N`` is included because Nature renders Extended Data Tables as their
+# own HTML pages whose anchor text does not say "Extended Data" — an earlier
+# version of this pattern matched every Extended Data *Figure* and silently
+# missed all four table links, which would have understated what is published.
 SUPPLEMENTARY_HINT = re.compile(
-    r"(supplementar|extended[\s_-]*data|MediaObjects|static-content\.springer\.com|/ESM|source[\s_-]*data)",
+    r"(supplementar|extended[\s_-]*data|MediaObjects|static-content\.springer\.com"
+    r"|/ESM|source[\s_-]*data|/tables/\d+)",
     re.I,
 )
+
+# Page-wide scans backing the negative half of the answer. A "no machine-readable
+# form" claim must rest on having looked for the asset families that would carry
+# one, not merely on a link filter returning nothing.
+DOWNLOAD_HOST = re.compile(r"static-content\.springer\.com|MediaObjects", re.I)
+TABULAR_ASSET = re.compile(r"[^\"'> ]+\.(?:xlsx|xls|csv|tsv|zip)\b", re.I)
 ED_TABLE_1_2 = re.compile(r"extended[\s_-]*data[\s_-]*table[\s_-]*([12])\b", re.I)
 
 
@@ -150,6 +161,19 @@ def main() -> int:
         # from the tables not being mentioned at all.
         result["extended_data_table_1_2_text_mentions"] = sorted(
             set(m.group(0) for m in ED_TABLE_1_2.finditer(TAG.sub(" ", html)))
+        )
+
+        # Every table page Nature renders for this article, whatever its anchor
+        # text. This is what the tables are published *as*.
+        result["table_page_links"] = sorted(
+            set(urljoin(ARTICLE_URL, h) for h in re.findall(r'href="([^"]*/tables/\d+)"', html))
+        )
+
+        # The negative evidence, stated as counts so it can be checked.
+        result["download_host_link_count"] = len(DOWNLOAD_HOST.findall(html))
+        result["tabular_asset_references"] = sorted(set(TABULAR_ASSET.findall(html)))
+        result["any_machine_readable_asset_on_page"] = bool(
+            result["machine_readable_links"] or result["tabular_asset_references"]
         )
 
         REPORT.write_text(json.dumps(result, indent=2), encoding="utf-8")
