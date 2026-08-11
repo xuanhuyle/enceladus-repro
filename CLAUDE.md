@@ -110,6 +110,24 @@ The reproduction target is the specific claim under test. Do not extrapolate
 from a reproduced result to the broader habitability argument; that is a
 separate claim with separate evidence.
 
+### Reading images
+
+**Reading published figures and tables from images is in scope. Fetch the image,
+read it directly, extract values, and verify every extracted value against an
+independent source. Never ask the user to perform a visual read. Report any value
+that cannot be independently verified as `UNRESOLVED`.**
+
+An image-rendered table is not a blocked source; it is a source that needs a
+different reader. Absence of a text layer is a reason to look at the image, not a
+reason to stop.
+
+The verification half of this rule is not optional. A value read off an image is
+a transcription until something independent confirms it — resolving an identifier
+against the archive index, or cross-checking a second column of the same record.
+An identifier that resolves to nothing, or to a record whose other columns
+disagree, is a **misread**: report it as such. Never silently correct it, and
+never quietly drop it.
+
 ### Scheduling
 
 **Never schedule a check for a state change only the user can cause. Ask the

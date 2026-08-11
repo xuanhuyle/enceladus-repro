@@ -5,6 +5,308 @@ per gate, and evidence links. Newest session first.
 
 ---
 
+## Session 008 — 2026-08-11 — Extended Data tables read from images; all nine identifiers resolve; four cross-checks disagree
+
+**Branch:** `claude/session-005-provenance-gate-6jxjb0` (PR #6 open, unmerged).
+
+**Open gate at session start:** kill-test 1. **Still `UNRESOLVED` — no verdict was
+stamped.** `reports/killtest1.md` is byte-for-byte unchanged; adjudication remains
+the operator's by hand, per the original design.
+
+### 0. A rule added, and a Session 007 failure it corrects
+
+Committed `bb21e9e` **before any other work**:
+
+> **Reading published figures and tables from images is in scope. Fetch the
+> image, read it directly, extract values, and verify every extracted value
+> against an independent source. Never ask the user to perform a visual read.
+> Report any value that cannot be independently verified as `UNRESOLVED`.**
+
+Session 007 found the tables were JPEGs and stopped. That was wrong. An
+image-rendered table is not a blocked source; it is a source needing a different
+reader. The tables were readable the whole time.
+
+### 1. `media.springernature.com` is still blocked — MECHANICAL FACT
+
+The instruction stated it had been allowlisted. **It has not been, from this
+session.** `curl` and `requests` both fail on the host root and on the exact
+image URL: `Tunnel connection failed: 403 Forbidden`.
+
+**No workaround was used.** Instead the tables were read from the publisher PDF
+already in `data/MANIFEST.md` — `16669185` bytes, SHA256
+`9d9d21c5…b0cabe`, re-confirmed on disk this session. That is not a substitute
+source: it is the same publication, already manifested, and Session 003 had
+already located these tables on its pages `21`–`24`. Pages were rendered with
+PyMuPDF at `220` dpi (and `500` dpi for re-reads) and read directly.
+
+### 2. Extended Data Table 1 — read
+
+Caption: "CDA set of Type 3 spectra used for this work". Columns verbatim:
+`Period #` · `Period from/to (UTC)` · `Period from/to (SCLK)` ·
+`Total Number of Type 3 spectra` · `Type 3 spectra triggered by impact`.
+**`15` period rows plus a TOTAL row.**
+
+Printed TOTAL: `962` Type 3 spectra, of which `345` triggered by impact. **The
+`345` figure is now sourced** — previous sessions carried it only from operator
+instruction.
+
+### 3. Extended Data Table 2 — read
+
+Caption: "Events of phosphate-rich ice grain recorded by CDA. Saturn distance is
+given in Saturn radii (equatorial radius R_S = 60268 km)". Columns verbatim:
+`Event#` · `UTC` · `SCLK` · `Saturn Radial Distance (R_S)` ·
+`Impact Speed Estimate (km/s)`. **`9` rows — the nine phosphate-bearing grains.**
+
+**Every grain carries a 10-digit Cassini spacecraft clock count.** These are
+per-event identifiers of exactly the kind the gate asks about.
+
+### 4. Verification of the transcription — MECHANICAL FACT
+
+A value read off an image is a transcription until something independent confirms
+it. Four checks, all in `src/killtest1_verify_identifiers.py`:
+
+| Check | Result |
+| --- | --- |
+| Table 1 column sums vs printed TOTAL | `962` and `345` — **both exact** |
+| SCLK − UTC offset across all `39` timestamps | monotonic, span `841` s over 2004–2008, no discontinuity |
+| Every Table 2 event inside a Table 1 SCLK period | **`9` of `9`** |
+| Archive resolution against PDS `CDAEVENTS` | **`9` of `9`** |
+
+The offset check is the sharpest: SCLK is a seconds counter, so `SCLK − UTC`
+drifts smoothly. A single misread digit would produce a jump of `≥10` s. It does
+not. Five offsets agree **exactly** between Table 1 and Table 2 rows read from
+two different page images.
+
+### 5. Archive resolution — all nine resolve
+
+Each event's UTC was looked up in the `CDAEVENTS` table of the covering COCDA
+volume, and `SPACECRAFT_SATURN_DISTANCE` (Saturnian radii) compared against the
+printed Saturn radial distance.
+
+| Event | UTC | SCLK | Volume | `EVENT_ID` | Printed R_S | Archive R_S | Δ |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| 1 | 2005-068/21:29:51 | `1489096588` | COCDA_0007 | `230039` | `7.4` | `7.38` | `0.02` |
+| 2 | 2005-267/03:12:50 | `1506224477` | COCDA_0014 | `458712` | `5.2` | `5.75` | **`0.55`** |
+| 3 | 2005-303/05:51:31 | `1509344418` | COCDA_0016 | `520013` | `6.3` | `6.31` | `0.01` |
+| 4 | 2005-359/04:44:36 | `1514178834` | COCDA_0018 | `590866` | `6.4` | `6.57` | **`0.17`** |
+| 5 | 2006-057/00:37:39 | `1519607252` | COCDA_0020 | `707568` | `9.3` | `9.43` | **`0.13`** |
+| 6 | 2006-080/13:54:11 | `1521642257` | COCDA_0021 | `668141` | `11.0` | `10.87` | **`0.13`** |
+| 7 | 2006-337/00:32:53 | `1543799120` | COCDA_0030 | `966467` | `5.0` | `4.98` | `0.02` |
+| 8 | 2006-337/00:34:46 | `1543799233` | COCDA_0030 | `966526` | `5.0` | `4.98` | `0.02` |
+| 9 | 2007-130/19:38:30 | `1557519144` | COCDA_0035 | `1025515` | `4.7` | `4.72` | `0.02` |
+
+Seven matched at the exact second; events `6` and `8` matched at `1` s offset.
+The `±2` s window is declared in the script and the actual offset reported per
+event, rather than applied silently.
+
+### 6. Four disagreements — reported, not corrected
+
+**Events `2`, `4`, `5` and `6` resolve to a real record whose Saturn distance
+disagrees** by `0.13` to `0.55` R_S. The five agreeing events agree to `≤0.02`,
+which is printing precision.
+
+The instruction's reading is that such a disagreement indicates a misread. **The
+evidence says the transcription is not the error:**
+
+- The four cells were re-rendered at `500` dpi and re-read. `5.2`, `6.4`, `9.3`
+  and `11.0` are unambiguous. `5.2` is not `5.8`.
+- Events `2`, `4` and `5` matched the archive at **exactly `0` s** offset, so the
+  UTC transcription for those rows is confirmed by the archive itself.
+- Neighbouring records carry the same archive distance (event 6's neighbours all
+  read `10.87`), so this is not an artefact of picking the wrong row.
+- The discrepancies are not a constant ratio (`10%`, `2.6%`, `1.4%`, `1.2%`), so
+  a differing Saturn radius convention does not explain them.
+
+**Which source is correct is not decided here**, and nothing was silently
+adjusted. `killtest1_findings.json` carries
+`"status": "IDENTIFIERS_RESOLVE_CROSSCHECK_DISAGREEMENTS"` and
+`"status_is_a_gate_verdict": false`.
+
+### 7. A caveat that matters for the gate — MECHANICAL FACT
+
+**A timestamp does not pick out a unique CDAEVENTS record.** The CDA event stream
+is dense: each event's UTC has between `1` and `5` candidate records within `2` s.
+"Resolved" means a record exists at that time — **not** that the mapping from
+grain to archive record is one-to-one. Anyone using these identifiers to pull
+spectra must disambiguate further.
+
+### Rule compliance
+
+- **Rule 2** — every fetched file manifested with URL, SHA256, size, UTC timestamp.
+- **Rule 3** — `git ls-files data/` returns `data/MANIFEST.md` alone. Table bodies
+  were **not** committed: only the identifier fields needed for archive lookup.
+
+### Next session must
+
+1. **Adjudicate `killtest1.md` by hand.** The evidence now supports a decision:
+   per-grain identifiers exist, are readable, and resolve. The open questions are
+   the four Saturn-distance disagreements and the one-to-many timestamp mapping.
+2. Decide whether the disagreements need raising with the authors.
+3. Note `media.springernature.com` is still blocked, should the image route ever
+   be wanted directly.
+
+---
+
+## Session 007 — 2026-08-11 — Gate 1 Nature route: tables are images, not markup; `UNRESOLVED`, no verdict stamped
+
+**Branch:** `claude/session-005-provenance-gate-6jxjb0`, restarted from `main` at
+`191939c` after PR #5 merged.
+
+**Open gate at session start:** kill-test 1, the go/no-go. **Still `UNRESOLVED`.**
+No verdict was stamped; `reports/killtest1.md` is byte-for-byte unchanged, and
+its adjudication remains the operator's by hand, per the original design.
+
+### Gate summary
+
+| Gate | Verdict | Change this session |
+| --- | --- | --- |
+| Kill-test 1 | **`UNRESOLVED`** | Nature Extended Data route attempted and **blocked**; evidence recorded |
+| Kill-test 2 | `PASS` | unchanged (Session 006) |
+
+### 0. Consolidation
+
+PR #5 (Session 006) merged into `main` as `191939c`.
+
+### 1. A correction to Session 006's framing — and to its facts
+
+**The operator's correction is accepted and correct in general:** HTML tables are
+machine-readable. `pandas.read_html` and DOM parsers turn them into rows
+directly, with no OCR and no transcription risk. The absence of xlsx/csv is not
+by itself a blocker, and Session 006 was wrong to frame the availability answer
+around xlsx/csv alone.
+
+**Session 006 also asserted a fact that is false.** It said Nature "renders them
+as HTML table pages". That was an inference from the existence of `/tables/N`
+URLs; the pages were never opened. They have now been opened, and they do not
+contain HTML tables.
+
+### 2. What the four Extended Data table pages actually contain — MECHANICAL FACT
+
+`python src/killtest1_tables.py` fetched all four pages (each manifested with URL
++ SHA256). Evidence: [`killtest1_findings.json`](killtest1_findings.json).
+
+| Page | `<table>` | `<tr>` | `<td>` | `<th>` | Rows parsed |
+| --- | --- | --- | --- | --- | --- |
+| `/tables/1` | `0` | `0` | `0` | `0` | `0` |
+| `/tables/2` | `0` | `0` | `0` | `0` | `0` |
+| `/tables/3` | `0` | `0` | `0` | `0` | `0` |
+| `/tables/4` | `0` | `0` | `0` | `0` | `0` |
+
+**There is no tabular markup on any of the four pages.** Each publishes its table
+as a single JPEG image:
+
+| Page | Image |
+| --- | --- |
+| `/tables/1` | `41586_2023_5987_Tab1_ESM.jpg` |
+| `/tables/2` | `41586_2023_5987_Tab2_ESM.jpg` |
+| `/tables/3` | `41586_2023_5987_Tab3_ESM.jpg` |
+| `/tables/4` | `41586_2023_5987_Tab4_ESM.jpg` |
+
+`pandas.read_html` raised `ValueError: No tables found` on every page. The error
+is recorded verbatim per page in the findings, so "could not be read" can never
+be mistaken later for "contained nothing".
+
+**This is the same barrier the publisher PDF presented (Session 003), in a
+different container.** There, the table bodies were image- or vector-rendered
+inside the PDF; here they are JPEGs inside an HTML page.
+
+### 3. A second, independent block — MECHANICAL FACT
+
+The images themselves are **not retrievable from this environment**.
+`media.springernature.com` is denied at the proxy. Verbatim:
+
+```
+ProxyError(MaxRetryError("HTTPSConnectionPool(host='media.springernature.com', port=443):
+Max retries exceeded with url: /lw834/springer-static/esm/art%3A10.1038%2Fs41586-023-05987-9/
+MediaObjects/41586_2023_5987_Tab1_ESM.jpg (Caused by ProxyError('Unable to connect to proxy',
+OSError('Tunnel connection failed: 403 Forbidden')))"))
+```
+
+Confirmed independently with `curl`: `CONNECT tunnel failed, response 403`.
+
+So even the image form of the tables could not be obtained. **No workaround was
+attempted** — no alternate mirror, no substitute source, no OCR.
+
+### 4. Column structure, row counts, identifier fields — the answer
+
+**Column headings: none recoverable.** There are no headings to report verbatim,
+because there is no markup carrying them. **Row counts: `0` extracted from all
+four pages.** **Identifier-shaped fields: none found, and that finding is
+worthless as evidence** — see below.
+
+What *is* machine-readable on these pages is the caption, carried in `<title>`.
+Verbatim:
+
+| Table | Caption |
+| --- | --- |
+| 1 | "Extended Data Table 1 CDA set of Type 3 spectra used for this work" |
+| 2 | "Extended Data Table 2 Events of phosphate-rich ice grain recorded by CDA. Saturn distance is given in Saturn radii (equatorial radius R_S = 60268 km)" |
+| 3 | "Extended Data Table 3 Temporal variations in dissolved species in fluids (in M), with pH at the calculated in-situ pH at 150 °C and 30 MPa" |
+| 4 | "Extended Data Table 4 Results (mole abundance in mol/kg) of electron probe microanalyzer (EPMA) analyses for Ca phosphates ... and for Ca carbonate minerals for Runs #1 and #2" |
+
+Table 2's caption states that Saturn distance is among its columns. That is the
+only column fact obtainable without reading the image, and it is **not** an
+identifier.
+
+All six identifier patterns returned `0` matches on all four pages. **This is not
+evidence that identifiers are absent.** The scanned scope was the pages' visible
+text — roughly `2922` to `3529` characters each, consisting of navigation,
+boilerplate and the caption. It contains no table body. The findings JSON records
+this scope caveat inline next to the counts.
+
+### 5. The two questions, answered plainly
+
+**Can the nine phosphate-bearing grains be resolved to per-event identifiers?**
+**Unknown — not from this route.** The table that would say so, Extended Data
+Table 2 ("Events of phosphate-rich ice grain recorded by CDA"), was not read.
+
+**Can the 345 Type 3 grains be resolved?** **Unknown, and note the number is
+itself unverified from within this repository.** Extended Data Table 1 is titled
+"CDA set of Type 3 spectra used for this work"; its row count has never been read
+by any session here. The figure of `345` grains comes from the operator's
+instruction, not from a source this repository has dereferenced.
+
+### 6. Status — `UNRESOLVED`, and why not `FAIL`
+
+`killtest1_findings.json` carries `"status": "UNRESOLVED"`.
+
+The operator's stop condition was: if a table's contents turn out not to contain
+per-grain identifiers, say so plainly and stop. **That condition did not fire,
+and saying it did would be false.** The contents were never read. "Not read" and
+"not present" imply opposite verdicts — `UNRESOLVED` versus `FAIL` — and nothing
+gathered here can distinguish them. This is the same distinction Session 003 drew
+about the PDF, and it holds for the same reason.
+
+**No verdict was stamped.** `reports/killtest1.md` is unchanged.
+
+### Rule compliance
+
+- **Rule 2** — four pages manifested with URL, SHA256, size in bytes, UTC timestamp.
+- **Rule 3** — `git ls-files data/` returns `data/MANIFEST.md` alone. No table
+  contents were committed; none existed to commit.
+
+### What would actually unblock this gate
+
+Stated as options for the operator, not chosen here:
+
+1. **Allowlist `media.springernature.com`**, which would at least make the table
+   images retrievable. It would not make them parseable.
+2. **OCR of the table images**, once retrievable. This is a change of method. The
+   original design's warning stands: an OCR error in a spacecraft clock count
+   would be silent, so every recovered identifier would need cross-checking
+   against the PDS archive before use.
+3. **Ask the authors for the tables in a machine-readable form.**
+   `reports/draft_cda_email.md` exists, unsent, and its premise now has firmer
+   ground: both the publisher PDF and the publisher's own HTML pages render these
+   tables as images.
+
+**HYPOTHESIS** — no route to the table bodies exists that does not involve either
+OCR or a request to the authors. No confidence level is attached. It earns status
+only by a session finding a machine-readable form, or by exhausting the
+alternatives.
+
+---
+
 ## Session 006 — 2026-08-11 — Kill-test 2 `PASS`; MS channel identified from primary documentation; polling rule added
 
 **Branch:** `claude/session-005-provenance-gate-6jxjb0`, restarted from `main` at
