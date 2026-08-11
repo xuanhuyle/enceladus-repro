@@ -1,136 +1,373 @@
 {
   "gate": "killtest1",
-  "question": "Do the nine phosphate-bearing grains resolve to machine-readable identifiers usable against the PDS archive?",
-  "paper_url": "https://www.geo.fu-berlin.de/en/geol/fachrichtungen/planet/projects/habitat_oasis/_layout/Postberg_2023_Nature618_Phosphates_Enceladus.pdf",
-  "n_pages": 24,
-  "extracted_chars": 73748,
-  "page_char_counts": {
-    "1": 5661,
-    "2": 6597,
-    "3": 7740,
-    "4": 5394,
-    "5": 8458,
-    "6": 8543,
-    "7": 8342,
-    "8": 8688,
-    "9": 7627,
-    "10": 357,
-    "11": 425,
-    "12": 462,
-    "13": 338,
-    "14": 485,
-    "15": 1196,
-    "16": 201,
-    "17": 912,
-    "18": 313,
-    "19": 349,
-    "20": 272,
-    "21": 69,
-    "22": 334,
-    "23": 604,
-    "24": 358
-  },
-  "extended_data_table_pages": {
-    "Extended\\s+Data\\s+Table\\s*1\\b": {
-      "occurrences": [
-        {
-          "page": 2,
-          "offset": 445
-        },
-        {
-          "page": 6,
-          "offset": 3192
-        },
-        {
-          "page": 7,
-          "offset": 5095
-        },
-        {
-          "page": 9,
-          "offset": 3462
-        },
-        {
-          "page": 21,
-          "offset": 0
-        }
-      ],
-      "heading_pages": [
-        21
-      ],
-      "cross_reference_pages": [
-        2,
-        6,
-        7,
-        9
-      ]
+  "question": "Do Extended Data Tables 1 and 2 carry per-grain identifiers (spacecraft clock, event ID, timestamp, orbit/flyby reference) that can be resolved against the PDS CDA archive?",
+  "doi": "10.1038/s41586-023-05987-9",
+  "checked_at_utc": "2026-08-11T18:04:15Z",
+  "verdict_policy": "This script stamps no verdict. reports/killtest1.md is adjudicated by hand against this evidence, per CLAUDE.md Rule 1.",
+  "publisher_pdf_route": {
+    "gate": "killtest1",
+    "question": "Do the nine phosphate-bearing grains resolve to machine-readable identifiers usable against the PDS archive?",
+    "paper_url": "https://www.geo.fu-berlin.de/en/geol/fachrichtungen/planet/projects/habitat_oasis/_layout/Postberg_2023_Nature618_Phosphates_Enceladus.pdf",
+    "n_pages": 24,
+    "extracted_chars": 73748,
+    "page_char_counts": {
+      "1": 5661,
+      "2": 6597,
+      "3": 7740,
+      "4": 5394,
+      "5": 8458,
+      "6": 8543,
+      "7": 8342,
+      "8": 8688,
+      "9": 7627,
+      "10": 357,
+      "11": 425,
+      "12": 462,
+      "13": 338,
+      "14": 485,
+      "15": 1196,
+      "16": 201,
+      "17": 912,
+      "18": 313,
+      "19": 349,
+      "20": 272,
+      "21": 69,
+      "22": 334,
+      "23": 604,
+      "24": 358
     },
-    "Extended\\s+Data\\s+Table\\s*2\\b": {
-      "occurrences": [
-        {
-          "page": 2,
-          "offset": 549
-        },
-        {
-          "page": 6,
-          "offset": 4149
-        },
-        {
-          "page": 11,
-          "offset": 193
-        },
-        {
-          "page": 22,
-          "offset": 8
-        }
-      ],
-      "heading_pages": [
-        22
-      ],
-      "cross_reference_pages": [
-        2,
-        6,
-        11
-      ]
+    "extended_data_table_pages": {
+      "Extended\\s+Data\\s+Table\\s*1\\b": {
+        "occurrences": [
+          {
+            "page": 2,
+            "offset": 445
+          },
+          {
+            "page": 6,
+            "offset": 3192
+          },
+          {
+            "page": 7,
+            "offset": 5095
+          },
+          {
+            "page": 9,
+            "offset": 3462
+          },
+          {
+            "page": 21,
+            "offset": 0
+          }
+        ],
+        "heading_pages": [
+          21
+        ],
+        "cross_reference_pages": [
+          2,
+          6,
+          7,
+          9
+        ]
+      },
+      "Extended\\s+Data\\s+Table\\s*2\\b": {
+        "occurrences": [
+          {
+            "page": 2,
+            "offset": 549
+          },
+          {
+            "page": 6,
+            "offset": 4149
+          },
+          {
+            "page": 11,
+            "offset": 193
+          },
+          {
+            "page": 22,
+            "offset": 8
+          }
+        ],
+        "heading_pages": [
+          22
+        ],
+        "cross_reference_pages": [
+          2,
+          6,
+          11
+        ]
+      }
+    },
+    "heading_offset_threshold_chars": 40,
+    "scanned_scope": "table heading pages [21, 22]",
+    "scanned_scope_chars": 404,
+    "identifier_candidates": {
+      "sclk_10digit": {
+        "count": 0,
+        "unique": 0,
+        "sample": []
+      },
+      "long_integer_8_12": {
+        "count": 0,
+        "unique": 0,
+        "sample": []
+      },
+      "iso_datetime": {
+        "count": 0,
+        "unique": 0,
+        "sample": []
+      },
+      "doy_datetime": {
+        "count": 0,
+        "unique": 0,
+        "sample": []
+      },
+      "event_id_labelled": {
+        "count": 0,
+        "unique": 0,
+        "sample": []
+      },
+      "cda_product_name": {
+        "count": 0,
+        "unique": 0,
+        "sample": []
+      }
+    },
+    "text_layer_present": true,
+    "table_page_extracts": {
+      "21": "Extended Data Table 1 | CDA set of Type 3 spectra used for this work\n",
+      "22": "Article\nExtended Data Table 2 | Events of phosphate-rich ice grain recorded by CDA. Saturn distance is given in Saturn radii \n(equatorial radius RS\u2009=\u200960268\u2009km)\nSince the impact speed onto CDA cannot be measured directly for these grains, the relative velocity of the spacecraft to a circular Keplerian orbit provides a rough estimate."
     }
   },
-  "heading_offset_threshold_chars": 40,
-  "scanned_scope": "table heading pages [21, 22]",
-  "scanned_scope_chars": 404,
-  "identifier_candidates": {
-    "sclk_10digit": {
-      "count": 0,
-      "unique": 0,
-      "sample": []
+  "nature_extended_data_route": {
+    "1": {
+      "url": "https://www.nature.com/articles/s41586-023-05987-9/tables/1",
+      "page_bytes": 164902,
+      "caption_verbatim": "Extended Data Table 1 CDA set of Type 3 spectra used for this work | Nature",
+      "markup_counts": {
+        "table": 0,
+        "tr": 0,
+        "td": 0,
+        "th": 0
+      },
+      "parsed_table_count": 0,
+      "column_headings_verbatim": null,
+      "row_counts": null,
+      "parse_error": "ValueError: No tables found",
+      "table_rendered_as_images": [
+        {
+          "url": "https://media.springernature.com/lw834/springer-static/esm/art%3A10.1038%2Fs41586-023-05987-9/MediaObjects/41586_2023_5987_Tab1_ESM.jpg",
+          "probe_error": "ProxyError(MaxRetryError(\"HTTPSConnectionPool(host='media.springernature.com', port=443): Max retries exceeded with url: /lw834/springer-static/esm/art%3A10.1038%2Fs41586-023-05987-9/MediaObjects/41586_2023_5987_Tab1_ESM.jpg (Caused by ProxyError('Unable to connect to proxy', OSError('Tunnel connection failed: 403 Forbidden')))\"))"
+        }
+      ],
+      "visible_text_chars": 2922,
+      "identifier_candidates": {
+        "sclk_10digit": {
+          "count": 0,
+          "unique": 0,
+          "sample": []
+        },
+        "long_integer_8_12": {
+          "count": 0,
+          "unique": 0,
+          "sample": []
+        },
+        "iso_datetime": {
+          "count": 0,
+          "unique": 0,
+          "sample": []
+        },
+        "doy_datetime": {
+          "count": 0,
+          "unique": 0,
+          "sample": []
+        },
+        "event_id_labelled": {
+          "count": 0,
+          "unique": 0,
+          "sample": []
+        },
+        "cda_product_name": {
+          "count": 0,
+          "unique": 0,
+          "sample": []
+        }
+      },
+      "identifier_scan_scope": "whole page visible text, including navigation and boilerplate \u2014 NOT a table body, because the page contains no tabular markup. Matches here are not evidence of identifiers in the table."
     },
-    "long_integer_8_12": {
-      "count": 0,
-      "unique": 0,
-      "sample": []
+    "2": {
+      "url": "https://www.nature.com/articles/s41586-023-05987-9/tables/2",
+      "page_bytes": 165375,
+      "caption_verbatim": "Extended Data Table 2 Events of phosphate-rich ice grain recorded by CDA. Saturn distance is given in Saturn radii (equatorial radius R<sub>S</sub> = 60268 km) | Nature",
+      "markup_counts": {
+        "table": 0,
+        "tr": 0,
+        "td": 0,
+        "th": 0
+      },
+      "parsed_table_count": 0,
+      "column_headings_verbatim": null,
+      "row_counts": null,
+      "parse_error": "ValueError: No tables found",
+      "table_rendered_as_images": [
+        {
+          "url": "https://media.springernature.com/lw1700/springer-static/esm/art%3A10.1038%2Fs41586-023-05987-9/MediaObjects/41586_2023_5987_Tab2_ESM.jpg",
+          "probe_error": "ProxyError(MaxRetryError(\"HTTPSConnectionPool(host='media.springernature.com', port=443): Max retries exceeded with url: /lw1700/springer-static/esm/art%3A10.1038%2Fs41586-023-05987-9/MediaObjects/41586_2023_5987_Tab2_ESM.jpg (Caused by ProxyError('Unable to connect to proxy', OSError('Tunnel connection failed: 403 Forbidden')))\"))"
+        }
+      ],
+      "visible_text_chars": 3263,
+      "identifier_candidates": {
+        "sclk_10digit": {
+          "count": 0,
+          "unique": 0,
+          "sample": []
+        },
+        "long_integer_8_12": {
+          "count": 0,
+          "unique": 0,
+          "sample": []
+        },
+        "iso_datetime": {
+          "count": 0,
+          "unique": 0,
+          "sample": []
+        },
+        "doy_datetime": {
+          "count": 0,
+          "unique": 0,
+          "sample": []
+        },
+        "event_id_labelled": {
+          "count": 0,
+          "unique": 0,
+          "sample": []
+        },
+        "cda_product_name": {
+          "count": 0,
+          "unique": 0,
+          "sample": []
+        }
+      },
+      "identifier_scan_scope": "whole page visible text, including navigation and boilerplate \u2014 NOT a table body, because the page contains no tabular markup. Matches here are not evidence of identifiers in the table."
     },
-    "iso_datetime": {
-      "count": 0,
-      "unique": 0,
-      "sample": []
+    "3": {
+      "url": "https://www.nature.com/articles/s41586-023-05987-9/tables/3",
+      "page_bytes": 165657,
+      "caption_verbatim": "Extended Data Table 3 Temporal variations in dissolved species in fluids (in M), with pH at the calculated in-situ pH at 150 \u00b0C and 30 MPa | Nature",
+      "markup_counts": {
+        "table": 0,
+        "tr": 0,
+        "td": 0,
+        "th": 0
+      },
+      "parsed_table_count": 0,
+      "column_headings_verbatim": null,
+      "row_counts": null,
+      "parse_error": "ValueError: No tables found",
+      "table_rendered_as_images": [
+        {
+          "url": "https://media.springernature.com/lw1700/springer-static/esm/art%3A10.1038%2Fs41586-023-05987-9/MediaObjects/41586_2023_5987_Tab3_ESM.jpg",
+          "probe_error": "ProxyError(MaxRetryError(\"HTTPSConnectionPool(host='media.springernature.com', port=443): Max retries exceeded with url: /lw1700/springer-static/esm/art%3A10.1038%2Fs41586-023-05987-9/MediaObjects/41586_2023_5987_Tab3_ESM.jpg (Caused by ProxyError('Unable to connect to proxy', OSError('Tunnel connection failed: 403 Forbidden')))\"))"
+        }
+      ],
+      "visible_text_chars": 3529,
+      "identifier_candidates": {
+        "sclk_10digit": {
+          "count": 0,
+          "unique": 0,
+          "sample": []
+        },
+        "long_integer_8_12": {
+          "count": 0,
+          "unique": 0,
+          "sample": []
+        },
+        "iso_datetime": {
+          "count": 0,
+          "unique": 0,
+          "sample": []
+        },
+        "doy_datetime": {
+          "count": 0,
+          "unique": 0,
+          "sample": []
+        },
+        "event_id_labelled": {
+          "count": 0,
+          "unique": 0,
+          "sample": []
+        },
+        "cda_product_name": {
+          "count": 0,
+          "unique": 0,
+          "sample": []
+        }
+      },
+      "identifier_scan_scope": "whole page visible text, including navigation and boilerplate \u2014 NOT a table body, because the page contains no tabular markup. Matches here are not evidence of identifiers in the table."
     },
-    "doy_datetime": {
-      "count": 0,
-      "unique": 0,
-      "sample": []
-    },
-    "event_id_labelled": {
-      "count": 0,
-      "unique": 0,
-      "sample": []
-    },
-    "cda_product_name": {
-      "count": 0,
-      "unique": 0,
-      "sample": []
+    "4": {
+      "url": "https://www.nature.com/articles/s41586-023-05987-9/tables/4",
+      "page_bytes": 165740,
+      "caption_verbatim": "Extended Data Table 4 Results (mole abundance in mol/kg) of electron probe microanalyzer (EPMA) analyses for Ca phosphates [Grain A and Vein B for Run #1, and Grains C and D for Run #2 (see Extended Data Fig. <a data-track=\"click\" data-track-label=\"link\" data-track-action=\"figure anchor\" href=\"/articles/s41586-023-05987-9#Fig11\">6</a>)], and for Ca carbonate minerals for Runs #1 and #2 | Nature",
+      "markup_counts": {
+        "table": 0,
+        "tr": 0,
+        "td": 0,
+        "th": 0
+      },
+      "parsed_table_count": 0,
+      "column_headings_verbatim": null,
+      "row_counts": null,
+      "parse_error": "ValueError: No tables found",
+      "table_rendered_as_images": [
+        {
+          "url": "https://media.springernature.com/lw728/springer-static/esm/art%3A10.1038%2Fs41586-023-05987-9/MediaObjects/41586_2023_5987_Tab4_ESM.jpg",
+          "probe_error": "ProxyError(MaxRetryError(\"HTTPSConnectionPool(host='media.springernature.com', port=443): Max retries exceeded with url: /lw728/springer-static/esm/art%3A10.1038%2Fs41586-023-05987-9/MediaObjects/41586_2023_5987_Tab4_ESM.jpg (Caused by ProxyError('Unable to connect to proxy', OSError('Tunnel connection failed: 403 Forbidden')))\"))"
+        }
+      ],
+      "visible_text_chars": 3402,
+      "identifier_candidates": {
+        "sclk_10digit": {
+          "count": 0,
+          "unique": 0,
+          "sample": []
+        },
+        "long_integer_8_12": {
+          "count": 0,
+          "unique": 0,
+          "sample": []
+        },
+        "iso_datetime": {
+          "count": 0,
+          "unique": 0,
+          "sample": []
+        },
+        "doy_datetime": {
+          "count": 0,
+          "unique": 0,
+          "sample": []
+        },
+        "event_id_labelled": {
+          "count": 0,
+          "unique": 0,
+          "sample": []
+        },
+        "cda_product_name": {
+          "count": 0,
+          "unique": 0,
+          "sample": []
+        }
+      },
+      "identifier_scan_scope": "whole page visible text, including navigation and boilerplate \u2014 NOT a table body, because the page contains no tabular markup. Matches here are not evidence of identifiers in the table."
     }
   },
-  "text_layer_present": true,
-  "table_page_extracts": {
-    "21": "Extended Data Table 1 | CDA set of Type 3 spectra used for this work\n",
-    "22": "Article\nExtended Data Table 2 | Events of phosphate-rich ice grain recorded by CDA. Saturn distance is given in Saturn radii \n(equatorial radius RS\u2009=\u200960268\u2009km)\nSince the impact speed onto CDA cannot be measured directly for these grains, the relative velocity of the spacecraft to a circular Keplerian orbit provides a rough estimate."
-  }
+  "tabular_markup_present_on_any_page": false,
+  "every_table_published_as_image": true,
+  "rows_extracted_total": 0,
+  "nine_phosphate_grains_resolved_to_identifiers": false,
+  "type3_grains_resolved_to_identifiers": false,
+  "resolution_blocker": "The table bodies were not read. All four Extended Data tables are published as JPEG images inside their HTML pages; the pages contain zero <table>, <tr>, <td> and <th> elements, so pandas.read_html and any DOM-based parser have nothing to parse. This is the same barrier the publisher PDF presented, in a different container.",
+  "status": "UNRESOLVED",
+  "status_reason": "Blocked at extraction, not decided. Whether the tables carry per-grain identifiers is UNKNOWN: their contents were never read. 'Not read' and 'not present' imply opposite verdicts (UNRESOLVED vs FAIL) and this evidence cannot distinguish them."
 }

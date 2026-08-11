@@ -5,6 +5,166 @@ per gate, and evidence links. Newest session first.
 
 ---
 
+## Session 007 — 2026-08-11 — Gate 1 Nature route: tables are images, not markup; `UNRESOLVED`, no verdict stamped
+
+**Branch:** `claude/session-005-provenance-gate-6jxjb0`, restarted from `main` at
+`191939c` after PR #5 merged.
+
+**Open gate at session start:** kill-test 1, the go/no-go. **Still `UNRESOLVED`.**
+No verdict was stamped; `reports/killtest1.md` is byte-for-byte unchanged, and
+its adjudication remains the operator's by hand, per the original design.
+
+### Gate summary
+
+| Gate | Verdict | Change this session |
+| --- | --- | --- |
+| Kill-test 1 | **`UNRESOLVED`** | Nature Extended Data route attempted and **blocked**; evidence recorded |
+| Kill-test 2 | `PASS` | unchanged (Session 006) |
+
+### 0. Consolidation
+
+PR #5 (Session 006) merged into `main` as `191939c`.
+
+### 1. A correction to Session 006's framing — and to its facts
+
+**The operator's correction is accepted and correct in general:** HTML tables are
+machine-readable. `pandas.read_html` and DOM parsers turn them into rows
+directly, with no OCR and no transcription risk. The absence of xlsx/csv is not
+by itself a blocker, and Session 006 was wrong to frame the availability answer
+around xlsx/csv alone.
+
+**Session 006 also asserted a fact that is false.** It said Nature "renders them
+as HTML table pages". That was an inference from the existence of `/tables/N`
+URLs; the pages were never opened. They have now been opened, and they do not
+contain HTML tables.
+
+### 2. What the four Extended Data table pages actually contain — MECHANICAL FACT
+
+`python src/killtest1_tables.py` fetched all four pages (each manifested with URL
++ SHA256). Evidence: [`killtest1_findings.json`](killtest1_findings.json).
+
+| Page | `<table>` | `<tr>` | `<td>` | `<th>` | Rows parsed |
+| --- | --- | --- | --- | --- | --- |
+| `/tables/1` | `0` | `0` | `0` | `0` | `0` |
+| `/tables/2` | `0` | `0` | `0` | `0` | `0` |
+| `/tables/3` | `0` | `0` | `0` | `0` | `0` |
+| `/tables/4` | `0` | `0` | `0` | `0` | `0` |
+
+**There is no tabular markup on any of the four pages.** Each publishes its table
+as a single JPEG image:
+
+| Page | Image |
+| --- | --- |
+| `/tables/1` | `41586_2023_5987_Tab1_ESM.jpg` |
+| `/tables/2` | `41586_2023_5987_Tab2_ESM.jpg` |
+| `/tables/3` | `41586_2023_5987_Tab3_ESM.jpg` |
+| `/tables/4` | `41586_2023_5987_Tab4_ESM.jpg` |
+
+`pandas.read_html` raised `ValueError: No tables found` on every page. The error
+is recorded verbatim per page in the findings, so "could not be read" can never
+be mistaken later for "contained nothing".
+
+**This is the same barrier the publisher PDF presented (Session 003), in a
+different container.** There, the table bodies were image- or vector-rendered
+inside the PDF; here they are JPEGs inside an HTML page.
+
+### 3. A second, independent block — MECHANICAL FACT
+
+The images themselves are **not retrievable from this environment**.
+`media.springernature.com` is denied at the proxy. Verbatim:
+
+```
+ProxyError(MaxRetryError("HTTPSConnectionPool(host='media.springernature.com', port=443):
+Max retries exceeded with url: /lw834/springer-static/esm/art%3A10.1038%2Fs41586-023-05987-9/
+MediaObjects/41586_2023_5987_Tab1_ESM.jpg (Caused by ProxyError('Unable to connect to proxy',
+OSError('Tunnel connection failed: 403 Forbidden')))"))
+```
+
+Confirmed independently with `curl`: `CONNECT tunnel failed, response 403`.
+
+So even the image form of the tables could not be obtained. **No workaround was
+attempted** — no alternate mirror, no substitute source, no OCR.
+
+### 4. Column structure, row counts, identifier fields — the answer
+
+**Column headings: none recoverable.** There are no headings to report verbatim,
+because there is no markup carrying them. **Row counts: `0` extracted from all
+four pages.** **Identifier-shaped fields: none found, and that finding is
+worthless as evidence** — see below.
+
+What *is* machine-readable on these pages is the caption, carried in `<title>`.
+Verbatim:
+
+| Table | Caption |
+| --- | --- |
+| 1 | "Extended Data Table 1 CDA set of Type 3 spectra used for this work" |
+| 2 | "Extended Data Table 2 Events of phosphate-rich ice grain recorded by CDA. Saturn distance is given in Saturn radii (equatorial radius R_S = 60268 km)" |
+| 3 | "Extended Data Table 3 Temporal variations in dissolved species in fluids (in M), with pH at the calculated in-situ pH at 150 °C and 30 MPa" |
+| 4 | "Extended Data Table 4 Results (mole abundance in mol/kg) of electron probe microanalyzer (EPMA) analyses for Ca phosphates ... and for Ca carbonate minerals for Runs #1 and #2" |
+
+Table 2's caption states that Saturn distance is among its columns. That is the
+only column fact obtainable without reading the image, and it is **not** an
+identifier.
+
+All six identifier patterns returned `0` matches on all four pages. **This is not
+evidence that identifiers are absent.** The scanned scope was the pages' visible
+text — roughly `2922` to `3529` characters each, consisting of navigation,
+boilerplate and the caption. It contains no table body. The findings JSON records
+this scope caveat inline next to the counts.
+
+### 5. The two questions, answered plainly
+
+**Can the nine phosphate-bearing grains be resolved to per-event identifiers?**
+**Unknown — not from this route.** The table that would say so, Extended Data
+Table 2 ("Events of phosphate-rich ice grain recorded by CDA"), was not read.
+
+**Can the 345 Type 3 grains be resolved?** **Unknown, and note the number is
+itself unverified from within this repository.** Extended Data Table 1 is titled
+"CDA set of Type 3 spectra used for this work"; its row count has never been read
+by any session here. The figure of `345` grains comes from the operator's
+instruction, not from a source this repository has dereferenced.
+
+### 6. Status — `UNRESOLVED`, and why not `FAIL`
+
+`killtest1_findings.json` carries `"status": "UNRESOLVED"`.
+
+The operator's stop condition was: if a table's contents turn out not to contain
+per-grain identifiers, say so plainly and stop. **That condition did not fire,
+and saying it did would be false.** The contents were never read. "Not read" and
+"not present" imply opposite verdicts — `UNRESOLVED` versus `FAIL` — and nothing
+gathered here can distinguish them. This is the same distinction Session 003 drew
+about the PDF, and it holds for the same reason.
+
+**No verdict was stamped.** `reports/killtest1.md` is unchanged.
+
+### Rule compliance
+
+- **Rule 2** — four pages manifested with URL, SHA256, size in bytes, UTC timestamp.
+- **Rule 3** — `git ls-files data/` returns `data/MANIFEST.md` alone. No table
+  contents were committed; none existed to commit.
+
+### What would actually unblock this gate
+
+Stated as options for the operator, not chosen here:
+
+1. **Allowlist `media.springernature.com`**, which would at least make the table
+   images retrievable. It would not make them parseable.
+2. **OCR of the table images**, once retrievable. This is a change of method. The
+   original design's warning stands: an OCR error in a spacecraft clock count
+   would be silent, so every recovered identifier would need cross-checking
+   against the PDS archive before use.
+3. **Ask the authors for the tables in a machine-readable form.**
+   `reports/draft_cda_email.md` exists, unsent, and its premise now has firmer
+   ground: both the publisher PDF and the publisher's own HTML pages render these
+   tables as images.
+
+**HYPOTHESIS** — no route to the table bodies exists that does not involve either
+OCR or a request to the authors. No confidence level is attached. It earns status
+only by a session finding a machine-readable form, or by exhausting the
+alternatives.
+
+---
+
 ## Session 006 — 2026-08-11 — Kill-test 2 `PASS`; MS channel identified from primary documentation; polling rule added
 
 **Branch:** `claude/session-005-provenance-gate-6jxjb0`, restarted from `main` at
