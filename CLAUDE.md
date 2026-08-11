@@ -110,6 +110,16 @@ The reproduction target is the specific claim under test. Do not extrapolate
 from a reproduced result to the broader habitability argument; that is a
 separate claim with separate evidence.
 
+### Scheduling
+
+**Never schedule a check for a state change only the user can cause. Ask the
+user instead, then stop.**
+
+A pull request that needs review, a merge that needs a human, an allowlist that
+needs an operator — none of these change because they were polled. Repeated
+check-ins on them produce no evidence, advance no gate, and bury the one thing
+that would actually help: the question.
+
 ### Provenance of this file
 
 **SOURCED CLAIM** — Target publication: Postberg, F. et al. "Detection of

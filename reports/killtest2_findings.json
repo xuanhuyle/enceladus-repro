@@ -1,6 +1,39 @@
 {
   "gate": "killtest2",
   "archive_root": "https://sbnarchive.psi.edu/pds3/cassini/cda/",
+  "volume": "COCDA_0001",
+  "volume_url": "https://sbnarchive.psi.edu/pds3/cassini/cda/COCDA_0001/",
+  "index_files": {
+    "index.lbl": "https://sbnarchive.psi.edu/pds3/cassini/cda/COCDA_0001/INDEX/INDEX.LBL",
+    "index.tab": "https://sbnarchive.psi.edu/pds3/cassini/cda/COCDA_0001/INDEX/INDEX.TAB"
+  },
+  "index_pdr_keys": [
+    "LABEL",
+    "INDEX_TABLE"
+  ],
+  "index_table_key": "INDEX_TABLE",
+  "index_n_rows": 25885,
+  "index_columns": [
+    "FILE_SPECIFICATION_NAME",
+    "RECORD BYTES",
+    "FILE_RECORDS",
+    "DATA_SET_ID"
+  ],
+  "name_matched_columns": [
+    "FILE_SPECIFICATION_NAME",
+    "FILE_RECORDS"
+  ],
+  "path_like_columns": [
+    "FILE_SPECIFICATION_NAME"
+  ],
+  "ms_candidate_count": 1,
+  "ms_candidate_sample": [
+    "COCDA_0001/DATA/CDASPECTRA_99084_00100.LBL"
+  ],
+  "ms_product_url": "https://sbnarchive.psi.edu/pds3/cassini/cda/COCDA_0001/DATA/CDASPECTRA_99084_00100.LBL",
+  "ms_data_file_url": "https://sbnarchive.psi.edu/pds3/cassini/cda/COCDA_0001/DATA/CDASPECTRA_99084_00100.TAB",
+  "ms_data_file_bytes": 602,
+  "ms_declared_rows": 0,
   "status": "UNRESOLVED",
-  "blocker": "transport failure listing https://sbnarchive.psi.edu/pds3/cassini/cda/: ProxyError(MaxRetryError(\"HTTPSConnectionPool(host='sbnarchive.psi.edu', port=443): Max retries exceeded with url: /pds3/cassini/cda/ (Caused by ProxyError('Unable to connect to proxy', OSError('Tunnel connection failed: 403 Forbidden')))\"))"
+  "blocker": "MS product CDASPECTRA_99084_00100.LBL in COCDA_0001 is empty: its label declares ROWS = 0 and its data file is 602 bytes. Nothing was mis-parsed \u2014 there is no trace in this product. Select a volume whose MS product carries rows (see --volume)."
 }
